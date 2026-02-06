@@ -488,6 +488,107 @@
             opacity: 1;
         }
 
+        /* TapDot popup – same panel style as details box, full-bleed photo + caption */
+        .tapdot-popup {
+            position: absolute;
+            z-index: 9;
+            top: 60px;
+            left: 20px;
+            right: 20px;
+            bottom: 60px;
+            border-radius: 30px;
+            background: rgba(128,128,128,0.30);
+            -webkit-backdrop-filter: blur(50px);
+            backdrop-filter: blur(50px);
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+            -webkit-transform: scale(0.95);
+            transform: scale(0.95);
+            pointer-events: none;
+            -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            overflow: hidden;
+        }
+        .tapdot-popup::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: inherit;
+            background: linear-gradient(145deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 41%, rgba(255,255,255,0) 57%, rgba(255,255,255,0.4) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            padding: 1.4px;
+            pointer-events: none;
+        }
+        .tapdot-popup.show {
+            opacity: 1;
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            pointer-events: auto;
+        }
+        .tapdot-popup .tapdot-popup-content {
+            flex: 1;
+            margin: 4px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            display: flex;
+            flex-direction: column;
+        }
+        .tapdot-popup .tapdot-popup-content::-webkit-scrollbar {
+            width: 0;
+            height: 0;
+        }
+        .tapdot-popup .tapdot-photo-wrap {
+            width: 100%;
+            flex-shrink: 0;
+            aspect-ratio: 4/3;
+            overflow: hidden;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .tapdot-popup .tapdot-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .tapdot-popup .tapdot-inner {
+            padding: 0 30px 55px;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        .tapdot-popup .tapdot-caption {
+            font-size: 17px;
+            font-weight: 400;
+            line-height: 1.5;
+            letter-spacing: 0.2px;
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+        }
+        .tapdot-popup-close {
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            width: 45px;
+            height: 45px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 23.5px;
+            cursor: pointer;
+            z-index: 11;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+        .tapdot-popup-close img {
+            width: 21px;
+            height: 21px;
+            pointer-events: none;
+        }
+
         /* Compass icon in parent menu */
         #compassIcon {
             width: 21px;
@@ -524,6 +625,21 @@
         </div>
         <div id="compassButton" class="menu-button">
             <img id="compassIcon" src="https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/NorthOutline.svg" alt="Compass" draggable="false">
+        </div>
+    </div>
+
+    <!-- TapDot popup: same panel style as details, full-bleed photo + caption -->
+    <div id="tapdotPopup" class="tapdot-popup">
+        <button type="button" class="tapdot-popup-close" id="tapdotPopupClose" aria-label="Close">
+            <img src="https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/Close2IconDefault.svg" alt="" draggable="false">
+        </button>
+        <div class="tapdot-popup-content">
+            <div class="tapdot-photo-wrap">
+                <img id="tapdotPopupPhoto" class="tapdot-photo" src="" alt="">
+            </div>
+            <div class="tapdot-inner">
+                <p id="tapdotPopupCaption" class="tapdot-caption"></p>
+            </div>
         </div>
     </div>
 
@@ -649,10 +765,10 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         //},
     ];
 
-    // Centralized control section for TapDots
+    // Centralized control section for TapDots (y = 0.6, x/z spread ±2 from center)
     const tapDotConfigurations = [
-        // Example TapDots (none currently)
-        //{ position: { x: 0, y: 0, z: 1 }, scale: 1, icon: 'info' },
+        { position: { x: 1.2, y: 0.6, z: -0.5 }, scale: 1, icon: 'info', photo: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=1200', caption: 'A quiet moment on the ranch.' },
+        { position: { x: -1.1, y: 0.6, z: 0.8 }, scale: 1, icon: 'camera', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200', caption: 'Wide open spaces and mountain views.' },
     ];
 
     // Base tap detection radius in pixels
@@ -1379,25 +1495,18 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
 
         if (closestDot) {
             console.log(`Tapped TapDot: ${closestDot.index}`);
-            let coloredSquare = document.createElement('div');
-            coloredSquare.style.position = 'absolute';
-            coloredSquare.style.top = '10px';
-            coloredSquare.style.left = '10px';
-            coloredSquare.style.width = '50px';
-            coloredSquare.style.height = '50px';
-            coloredSquare.style.backgroundColor = closestDot.color;
-            coloredSquare.style.color = 'white';
-            coloredSquare.style.display = 'flex';
-            coloredSquare.style.alignItems = 'center';
-            coloredSquare.style.justifyContent = 'center';
-            coloredSquare.style.fontSize = '20px';
-            coloredSquare.style.fontWeight = 'bold';
-            coloredSquare.textContent = `Dot ${closestDot.index}`;
-            document.body.appendChild(coloredSquare);
-
-            setTimeout(() => {
-                document.body.removeChild(coloredSquare);
-            }, 1000);
+            const cfg = closestDot.config;
+            const popup = document.getElementById('tapdotPopup');
+            const photoEl = document.getElementById('tapdotPopupPhoto');
+            const captionEl = document.getElementById('tapdotPopupCaption');
+            if (popup && photoEl && captionEl) {
+                photoEl.src = cfg.photo || '';
+                photoEl.alt = cfg.caption || '';
+                captionEl.textContent = cfg.caption || '';
+                popup.classList.add('show');
+                document.getElementById('overlay-ui').classList.add('active');
+                window.isTapdotPopupOpen = true;
+            }
         } else {
             console.log('No TapDot detected');
         }
@@ -1623,9 +1732,27 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
 
     document.addEventListener('fullscreenchange', updateFullscreenIcon);
 
+    window.isTapdotPopupOpen = false;
+    const tapdotPopup = document.getElementById('tapdotPopup');
+    const tapdotPopupClose = document.getElementById('tapdotPopupClose');
+
+    function closeTapdotPopup() {
+        if (!tapdotPopup) return;
+        window.isTapdotPopupOpen = false;
+        tapdotPopup.classList.remove('show');
+        if (!isDetailsOpen) overlayUI.classList.remove('active');
+    }
+
+    if (tapdotPopupClose) {
+        tapdotPopupClose.addEventListener('mouseup', () => closeTapdotPopup());
+    }
+
     overlayUI.addEventListener('click', () => {
         if (isDetailsOpen) {
             closeDetails();
+        }
+        if (window.isTapdotPopupOpen) {
+            closeTapdotPopup();
         }
     });
 
