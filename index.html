@@ -497,7 +497,7 @@
             right: 20px;
             bottom: 60px;
             border-radius: 30px;
-            background: rgba(128,128,128,0.30);
+            background: rgba(28, 28, 30, 0.85);
             -webkit-backdrop-filter: blur(50px);
             backdrop-filter: blur(50px);
             display: flex;
@@ -515,7 +515,7 @@
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             border-radius: inherit;
-            background: linear-gradient(145deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 41%, rgba(255,255,255,0) 57%, rgba(255,255,255,0.4) 100%);
+            background: linear-gradient(145deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0) 41%, rgba(255,255,255,0) 57%, rgba(255,255,255,0.15) 100%);
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
@@ -531,7 +531,7 @@
         }
         .tapdot-popup .tapdot-popup-content {
             flex: 1;
-            margin: 4px;
+            margin: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
@@ -547,8 +547,8 @@
             flex-shrink: 0;
             aspect-ratio: 4/3;
             overflow: hidden;
-            border-radius: 20px;
-            margin-bottom: 20px;
+            border-radius: 0;
+            margin: 0;
         }
         .tapdot-popup .tapdot-photo {
             width: 100%;
@@ -557,7 +557,7 @@
             display: block;
         }
         .tapdot-popup .tapdot-inner {
-            padding: 0 30px 55px;
+            padding: 20px 30px 55px;
             font-family: 'Helvetica Neue', Arial, sans-serif;
         }
         .tapdot-popup .tapdot-caption {
@@ -580,6 +580,8 @@
             border-radius: 23.5px;
             cursor: pointer;
             z-index: 11;
+            background: transparent;
+            border: none;
             -webkit-user-select: none;
             user-select: none;
         }
@@ -587,6 +589,7 @@
             width: 21px;
             height: 21px;
             pointer-events: none;
+            filter: brightness(0) invert(1);
         }
 
         /* Compass icon in parent menu */
