@@ -601,12 +601,40 @@
             z-index: 11;
             background: transparent;
             border: none;
+            overflow: hidden;
             -webkit-user-select: none;
             user-select: none;
+        }
+        .tapdot-popup-close::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            -webkit-transform: scale(0);
+            transform: scale(0);
+            opacity: 0;
+            z-index: 0;
+            -webkit-transition: -webkit-transform 0.3s ease, opacity 0.3s ease;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        @media (hover: hover) {
+            .tapdot-popup-close:hover::before {
+                -webkit-transform: scale(1);
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        .tapdot-popup-close.active::before {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            opacity: 1;
         }
         .tapdot-popup-close img {
             width: 21px;
             height: 21px;
+            position: relative;
+            z-index: 1;
             pointer-events: none;
             filter: brightness(0) invert(1);
         }
