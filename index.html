@@ -532,11 +532,11 @@
         .tapdot-popup .tapdot-popup-content {
             flex: 1;
             margin: 0;
+            min-height: 0;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
-            display: flex;
-            flex-direction: column;
+            padding-bottom: 200px;
         }
         .tapdot-popup .tapdot-popup-content::-webkit-scrollbar {
             width: 0;
@@ -544,29 +544,51 @@
         }
         .tapdot-popup .tapdot-photo-wrap {
             width: 100%;
+            min-height: 100%;
             flex-shrink: 0;
-            aspect-ratio: 4/3;
             overflow: hidden;
             border-radius: 0;
             margin: 0;
+            background: #1c1c1e;
         }
         .tapdot-popup .tapdot-photo {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
+            min-height: 100%;
             display: block;
+            object-fit: cover;
+            object-position: top center;
         }
-        .tapdot-popup .tapdot-inner {
-            padding: 20px 30px 55px;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+        /* Caption overlay: fixed at bottom of popup, gradient + text always visible */
+        .tapdot-popup .tapdot-caption-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            pointer-events: none;
+        }
+        .tapdot-popup .tapdot-caption-gradient {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 28%, rgba(0,0,0,0.12) 55%, transparent 100%);
+            z-index: 0;
         }
         .tapdot-popup .tapdot-caption {
+            position: relative;
+            z-index: 1;
             font-size: 17px;
             font-weight: 400;
             line-height: 1.5;
             letter-spacing: 0.2px;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             margin: 0;
+            padding: 0 30px 52px;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
         .tapdot-popup-close {
             position: absolute;
@@ -631,7 +653,7 @@
         </div>
     </div>
 
-    <!-- TapDot popup: same panel style as details, full-bleed photo + caption -->
+    <!-- TapDot popup: scrollable photo, caption pinned at bottom with gradient overlay -->
     <div id="tapdotPopup" class="tapdot-popup">
         <button type="button" class="tapdot-popup-close" id="tapdotPopupClose" aria-label="Close">
             <img src="https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/Close2IconDefault.svg" alt="" draggable="false">
@@ -640,9 +662,10 @@
             <div class="tapdot-photo-wrap">
                 <img id="tapdotPopupPhoto" class="tapdot-photo" src="" alt="">
             </div>
-            <div class="tapdot-inner">
-                <p id="tapdotPopupCaption" class="tapdot-caption"></p>
-            </div>
+        </div>
+        <div class="tapdot-caption-overlay">
+            <div class="tapdot-caption-gradient" aria-hidden="true"></div>
+            <p id="tapdotPopupCaption" class="tapdot-caption"></p>
         </div>
     </div>
 
