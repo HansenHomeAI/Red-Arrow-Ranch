@@ -822,8 +822,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         { position: { x: -1.1, y: 0.6, z: 0.8 }, scale: 1, icon: 'camera', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200', caption: 'Wide open spaces and mountain views.' },
     ];
 
-    // Base tap detection radius in pixels
-    const baseTapDetectionRadius = 15; // Base value for tap detection radius
+    // Tap detection: scale with visual size (so hit area matches apparent dot size)
+    const tapRadiusMultiplier = 1.6; // Hit area = visible dot radius * this (slightly larger for easier tap)
 
     // Centralized control section for BorderDots and BorderLines
     const borderDotPositions = [
@@ -1120,17 +1120,25 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     hiddenCanvas.style.display = 'none';
     document.body.appendChild(hiddenCanvas);
 
+    // Screen-space tap radius so hit area scales with how big the dot appears (relative to view)
+    function getTapDotScreenRadiusPx(tapDot) {
+        const worldRadius = tapDotBaseSize * (tapDot.scale || 1);
+        const distanceToCamera = camera.position.distanceTo(tapDot.dot.position);
+        const halfFovRad = (camera.fov * Math.PI / 180) / 2;
+        const projectedRadiusPx = (worldRadius / distanceToCamera) * (window.innerHeight / 2) / Math.tan(halfFovRad);
+        return Math.max(projectedRadiusPx * tapRadiusMultiplier, 12);
+    }
+
     function renderHiddenCanvas() {
         hiddenContext.clearRect(0, 0, hiddenCanvas.width, hiddenCanvas.height);
         tapDots.forEach((tapDot) => {
             let screenPos = tapDot.dot.position.clone().project(camera);
             let x = (screenPos.x + 1) / 2 * window.innerWidth;
             let y = -(screenPos.y - 1) / 2 * window.innerHeight;
-            const distanceToCamera = camera.position.distanceTo(tapDot.dot.position);
-            const dynamicRadius = baseTapDetectionRadius * (tapDot.scale || 1) / distanceToCamera;
+            const screenRadiusPx = getTapDotScreenRadiusPx(tapDot);
             hiddenContext.fillStyle = tapDot.color;
             hiddenContext.beginPath();
-            hiddenContext.arc(x, y, dynamicRadius, 0, 2 * Math.PI);
+            hiddenContext.arc(x, y, screenRadiusPx, 0, 2 * Math.PI);
             hiddenContext.fill();
         });
     }
@@ -1537,8 +1545,9 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             let screenPos = tapDot.dot.position.clone().project(camera);
             let dotX = (screenPos.x + 1) / 2 * window.innerWidth;
             let dotY = -(screenPos.y - 1) / 2 * window.innerHeight;
+            const screenRadiusPx = getTapDotScreenRadiusPx(tapDot);
             let distance = Math.sqrt(Math.pow(dotX - x, 2) + Math.pow(dotY - y, 2));
-            if (distance < closestDistance && distance < baseTapDetectionRadius * (tapDot.scale || 1)) {
+            if (distance < closestDistance && distance < screenRadiusPx) {
                 closestDot = tapDot;
                 closestDistance = distance;
             }
