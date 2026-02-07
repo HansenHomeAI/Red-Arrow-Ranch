@@ -587,6 +587,27 @@
             padding: 0 30px 52px;
             font-family: 'Helvetica Neue', Arial, sans-serif;
         }
+        .tapdot-carousel-tap {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            z-index: 1;
+            cursor: pointer;
+        }
+        #tapdotCarouselPrev { left: 0; }
+        #tapdotCarouselNext { left: 50%; }
+        .tapdot-carousel-tap.hidden { display: none; pointer-events: none; }
+        .tapdot-popup-content { position: relative; }
+        .tapdot-carousel-counter {
+            position: relative;
+            z-index: 1;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin: 0 0 4px;
+            padding: 0 30px;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
         .tapdot-popup-close {
             position: absolute;
             top: 7px;
@@ -678,7 +699,7 @@
         </div>
     </div>
 
-    <!-- TapDot popup: scrollable photo, caption pinned at bottom with gradient overlay -->
+    <!-- TapDot popup: photo carousel (tap left/right to navigate), caption at bottom -->
     <div id="tapdotPopup" class="tapdot-popup">
         <button type="button" class="tapdot-popup-close" id="tapdotPopupClose" aria-label="Close">
             <img src="https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/Close2IconDefault.svg" alt="" draggable="false">
@@ -687,10 +708,13 @@
             <div class="tapdot-photo-wrap">
                 <img id="tapdotPopupPhoto" class="tapdot-photo" src="" alt="">
             </div>
+            <div id="tapdotCarouselPrev" class="tapdot-carousel-tap hidden" aria-label="Previous photo"></div>
+            <div id="tapdotCarouselNext" class="tapdot-carousel-tap hidden" aria-label="Next photo"></div>
         </div>
         <div class="tapdot-caption-overlay">
             <div class="tapdot-caption-gradient" aria-hidden="true"></div>
             <p id="tapdotPopupCaption" class="tapdot-caption"></p>
+            <p id="tapdotCarouselCounter" class="tapdot-carousel-counter" aria-hidden="true"></p>
         </div>
     </div>
 
@@ -796,18 +820,19 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     ];
 
     // TapDots: info icons (No Photos) = label pops up above; camera icons = photo popup with caption
+    // Camera icons use photos[] array for carousel; add more paths to include more images per location
     const tapDotConfigurations = [
-        // Camera icons (have photos) - caption = bio/description in photo popup
-        { position: { x: 0.15, y: 0.25, z: 0.25 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Chicken Coop/1.jpg', caption: 'Chicken Coop' },
-        { position: { x: 0.45, y: 0.28, z: 0.05 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Covered Round Pen/1.jpg', caption: 'Covered Round Pen' },
-        { position: { x: 0.78, y: 0.32, z: -0.12 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/European Barn/1.jpg', caption: 'European Barn' },
-        { position: { x: 0.12, y: 0.22, z: 0.52 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Greenhouse/1.jpg', caption: 'Greenhouse' },
-        { position: { x: 0.88, y: 0.35, z: 0.08 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Heritage Barn/1.jpg', caption: 'Heritage Barn' },
-        { position: { x: 0.32, y: 0.26, z: -0.02 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Indoor Riding Arena/1.jpg', caption: 'Indoor Riding Arena' },
-        { position: { x: 0.72, y: 0.42, z: 0.42 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Main Residence/1.jpg', caption: 'Main Residence' },
-        { position: { x: 0.38, y: 0.27, z: 0.18 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Outdoor Riding Arena/1.jpg', caption: 'Outdoor Riding Arena' },
-        { position: { x: 0.08, y: 0.24, z: 0.38 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Playground/1.jpg', caption: 'Playground' },
-        { position: { x: 0.85, y: 0.45, z: 0.22 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Trail Riding Course/1.jpg', caption: 'Trail Riding Course' },
+        // Camera icons (have photos) - photos[] = carousel images, caption = bio in popup
+        { position: { x: 0.15, y: 0.25, z: 0.25 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Chicken Coop/1.jpg', '3D Model Folders/Chicken Coop/2.jpg', '3D Model Folders/Chicken Coop/3.jpg'], caption: 'Chicken Coop' },
+        { position: { x: 0.45, y: 0.28, z: 0.05 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Covered Round Pen/1.jpg', '3D Model Folders/Covered Round Pen/2.jpg'], caption: 'Covered Round Pen' },
+        { position: { x: 0.78, y: 0.32, z: -0.12 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/European Barn/1.jpg', '3D Model Folders/European Barn/2.jpg', '3D Model Folders/European Barn/3.jpg', '3D Model Folders/European Barn/4.jpg', '3D Model Folders/European Barn/5.jpg', '3D Model Folders/European Barn/6.jpg'], caption: 'European Barn' },
+        { position: { x: 0.12, y: 0.22, z: 0.52 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Greenhouse/1.jpg', '3D Model Folders/Greenhouse/2.jpg'], caption: 'Greenhouse' },
+        { position: { x: 0.88, y: 0.35, z: 0.08 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Heritage Barn/1.jpg', '3D Model Folders/Heritage Barn/2.jpg', '3D Model Folders/Heritage Barn/3.jpg', '3D Model Folders/Heritage Barn/4.jpg', '3D Model Folders/Heritage Barn/5.jpg', '3D Model Folders/Heritage Barn/6.jpg', '3D Model Folders/Heritage Barn/7.jpg', '3D Model Folders/Heritage Barn/8.jpg'], caption: 'Heritage Barn' },
+        { position: { x: 0.32, y: 0.26, z: -0.02 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Indoor Riding Arena/1.jpg', '3D Model Folders/Indoor Riding Arena/2.jpg', '3D Model Folders/Indoor Riding Arena/3.jpg'], caption: 'Indoor Riding Arena' },
+        { position: { x: 0.72, y: 0.42, z: 0.42 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Main Residence/1.jpg', '3D Model Folders/Main Residence/2.jpg', '3D Model Folders/Main Residence/3.jpg', '3D Model Folders/Main Residence/4.jpg', '3D Model Folders/Main Residence/5.jpg', '3D Model Folders/Main Residence/6.jpg', '3D Model Folders/Main Residence/7.jpg', '3D Model Folders/Main Residence/8.jpg', '3D Model Folders/Main Residence/9.jpg', '3D Model Folders/Main Residence/10.jpg', '3D Model Folders/Main Residence/11.jpg', '3D Model Folders/Main Residence/12.jpg', '3D Model Folders/Main Residence/13.jpg'], caption: 'Main Residence' },
+        { position: { x: 0.38, y: 0.27, z: 0.18 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Outdoor Riding Arena/1.jpg', '3D Model Folders/Outdoor Riding Arena/2.jpg'], caption: 'Outdoor Riding Arena' },
+        { position: { x: 0.08, y: 0.24, z: 0.38 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Playground/1.jpg', '3D Model Folders/Playground/2.jpg', '3D Model Folders/Playground/3.jpg', '3D Model Folders/Playground/4.jpg'], caption: 'Playground' },
+        { position: { x: 0.85, y: 0.45, z: 0.22 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Trail Riding Course/1.jpg'], caption: 'Trail Riding Course' },
         // Info icons (No Photos) - caption = label that pops up above icon
         { position: { x: 1.05, y: 0.38, z: -0.28 }, scale: 0.3, icon: 'info', caption: 'Garage Workshop' },
         { position: { x: 0.62, y: 0.30, z: 0.28 }, scale: 0.3, icon: 'info', caption: 'Hay Storage' },
@@ -850,8 +875,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     };
 
     // Base sizes for TapDots and Icons
-    const tapDotBaseSize = 0.04; // Adjust this value to change the TapDot size
-    const iconBaseSize = 0.08;   // Adjust this value to change the Icon size
+    const tapDotBaseSize = 0.08; // TapDot sphere size (doubled for better visibility)
+    const iconBaseSize = 0.16;   // Icon size (doubled for better visibility)
 
     // Zone configurations
     const zoneConfigurations = [
@@ -1106,22 +1131,22 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             const text = config.caption;
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            canvas.width = 1536;
-            canvas.height = 256;
+            canvas.width = 2304;
+            canvas.height = 384;
             context.fillStyle = 'rgba(255, 255, 255, 0)';
             context.fillRect(0, 0, canvas.width, canvas.height);
-            context.font = '520 80px "Helvetica Neue", Helvetica, Arial, sans-serif';
+            context.font = '520 120px "Helvetica Neue", Helvetica, Arial, sans-serif';
             context.textAlign = 'center';
             context.textBaseline = 'middle';
             context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-            context.lineWidth = 3;
+            context.lineWidth = 4;
             context.fillStyle = 'white';
             context.fillText(text, canvas.width / 2, canvas.height / 2);
             context.strokeText(text, canvas.width / 2, canvas.height / 2);
 
             const texture = new Texture(canvas);
             texture.needsUpdate = true;
-            const geometry = new PlaneGeometry(1.2, 0.2);
+            const geometry = new PlaneGeometry(1.8, 0.3);
             const material = new MeshStandardMaterial({
                 map: texture,
                 transparent: true,
@@ -1135,7 +1160,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             infoTextPlane = new Mesh(geometry, material);
             infoTextPlane.visible = false;
             infoTextPlane.scale.setScalar(scale || 1);
-            infoTextPlane.geometry.translate(0, 0.08, 0); // offset above center (closer to icon)
+            infoTextPlane.geometry.translate(0, 0.12, 0); // offset above center
             scene.add(infoTextPlane);
         }
 
@@ -1560,10 +1585,25 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 const popup = document.getElementById('tapdotPopup');
                 const photoEl = document.getElementById('tapdotPopupPhoto');
                 const captionEl = document.getElementById('tapdotPopupCaption');
+                const photos = cfg.photos || (cfg.photo ? [cfg.photo] : []);
                 if (popup && photoEl && captionEl) {
-                    photoEl.src = cfg.photo || '';
+                    photoEl.src = photos[0] || '';
                     photoEl.alt = cfg.caption || '';
                     captionEl.textContent = cfg.caption || '';
+                    window.tapdotCarouselPhotos = photos;
+                    window.tapdotCarouselIndex = 0;
+                    const prevBtn = document.getElementById('tapdotCarouselPrev');
+                    const nextBtn = document.getElementById('tapdotCarouselNext');
+                    const counterEl = document.getElementById('tapdotCarouselCounter');
+                    if (photos.length > 1) {
+                        prevBtn.classList.remove('hidden');
+                        nextBtn.classList.remove('hidden');
+                        if (counterEl) counterEl.textContent = '1 / ' + photos.length;
+                    } else {
+                        prevBtn.classList.add('hidden');
+                        nextBtn.classList.add('hidden');
+                        if (counterEl) counterEl.textContent = '';
+                    }
                     popup.classList.add('show');
                     document.getElementById('overlay-ui').classList.add('active');
                     window.isTapdotPopupOpen = true;
@@ -1798,6 +1838,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     document.addEventListener('fullscreenchange', updateFullscreenIcon);
 
     window.isTapdotPopupOpen = false;
+    window.tapdotCarouselPhotos = [];
+    window.tapdotCarouselIndex = 0;
     const tapdotPopup = document.getElementById('tapdotPopup');
     const tapdotPopupClose = document.getElementById('tapdotPopupClose');
 
@@ -1808,9 +1850,24 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (!isDetailsOpen) overlayUI.classList.remove('active');
     }
 
+    function tapdotCarouselNav(direction) {
+        const photos = window.tapdotCarouselPhotos;
+        if (!photos || photos.length < 2) return;
+        let idx = (window.tapdotCarouselIndex + direction + photos.length) % photos.length;
+        window.tapdotCarouselIndex = idx;
+        const photoEl = document.getElementById('tapdotPopupPhoto');
+        const counterEl = document.getElementById('tapdotCarouselCounter');
+        if (photoEl) photoEl.src = photos[idx];
+        if (counterEl) counterEl.textContent = (idx + 1) + ' / ' + photos.length;
+    }
+
     if (tapdotPopupClose) {
         tapdotPopupClose.addEventListener('mouseup', () => closeTapdotPopup());
     }
+    const tapdotCarouselPrev = document.getElementById('tapdotCarouselPrev');
+    const tapdotCarouselNext = document.getElementById('tapdotCarouselNext');
+    if (tapdotCarouselPrev) tapdotCarouselPrev.addEventListener('click', (e) => { e.stopPropagation(); tapdotCarouselNav(-1); });
+    if (tapdotCarouselNext) tapdotCarouselNext.addEventListener('click', (e) => { e.stopPropagation(); tapdotCarouselNav(1); });
 
     overlayUI.addEventListener('click', () => {
         if (isDetailsOpen) {
