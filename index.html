@@ -1086,6 +1086,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         return `#${finalR.toString(16).padStart(2,'0')}${finalG.toString(16).padStart(2,'0')}${finalB.toString(16).padStart(2,'0')}`;
     }
 
+    let visibleInfoLabelTapDot = null; // tracks which info label is shown (one at a time)
+
     function createTapDot(config, index) {
         const { position, scale, icon } = config;
         const dotColor = generateUniqueColor(index);
@@ -1109,7 +1111,45 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         iconMesh.position.copy(dot.position);
         iconMesh.scale.setScalar(scale || 1);
 
-        tapDots.push({ dot, iconMesh, color: dotColor, scale, index, config });
+        let infoTextPlane = null;
+        if (icon === 'info' && config.caption) {
+            const text = config.caption;
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 1536;
+            canvas.height = 256;
+            context.fillStyle = 'rgba(255, 255, 255, 0)';
+            context.fillRect(0, 0, canvas.width, canvas.height);
+            context.font = '520 80px "Helvetica Neue", Helvetica, Arial, sans-serif';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+            context.lineWidth = 3;
+            context.fillStyle = 'white';
+            context.fillText(text, canvas.width / 2, canvas.height / 2);
+            context.strokeText(text, canvas.width / 2, canvas.height / 2);
+
+            const texture = new Texture(canvas);
+            texture.needsUpdate = true;
+            const geometry = new PlaneGeometry(1.2, 0.2);
+            const material = new MeshStandardMaterial({
+                map: texture,
+                transparent: true,
+                opacity: 0,
+                alphaTest: 0.5,
+                side: DoubleSide,
+                premultipliedAlpha: true,
+                emissive: 'white',
+                emissiveIntensity: 2,
+            });
+            infoTextPlane = new Mesh(geometry, material);
+            infoTextPlane.visible = false;
+            infoTextPlane.scale.setScalar(scale || 1);
+            infoTextPlane.geometry.translate(0, 0.08, 0); // offset above center (closer to icon)
+            scene.add(infoTextPlane);
+        }
+
+        tapDots.push({ dot, iconMesh, color: dotColor, scale, index, config, infoTextPlane });
         scene.add(dot);
         scene.add(iconMesh);
     }
@@ -1516,6 +1556,23 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             let tapDotRadius = tapDotBaseSize * (tapDot.scale || 1);
             let offsetDistance = tapDotRadius + 0.02;
             tapDot.iconMesh.position.copy(tapDot.dot.position).add(direction.multiplyScalar(offsetDistance));
+            if (tapDot.infoTextPlane && tapDot.infoLabelTargetOpacity !== undefined) {
+                const mat = tapDot.infoTextPlane.material;
+                mat.opacity += (tapDot.infoLabelTargetOpacity - mat.opacity) * 0.2;
+                if (mat.opacity < 0.01) {
+                    mat.opacity = 0;
+                    tapDot.infoTextPlane.visible = false;
+                    delete tapDot.infoLabelTargetOpacity;
+                    if (visibleInfoLabelTapDot === tapDot) visibleInfoLabelTapDot = null;
+                } else {
+                    tapDot.infoTextPlane.visible = true;
+                    tapDot.infoTextPlane.position.copy(tapDot.iconMesh.position);
+                    tapDot.infoTextPlane.lookAt(camera.position);
+                }
+            } else if (tapDot.infoTextPlane && tapDot.infoTextPlane.visible) {
+                tapDot.infoTextPlane.position.copy(tapDot.iconMesh.position);
+                tapDot.infoTextPlane.lookAt(camera.position);
+            }
         });
 
         // Update compass icon with smart switching and center rotation
@@ -1557,18 +1614,33 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (closestDot) {
             console.log(`Tapped TapDot: ${closestDot.index}`);
             const cfg = closestDot.config;
-            const popup = document.getElementById('tapdotPopup');
-            const photoEl = document.getElementById('tapdotPopupPhoto');
-            const captionEl = document.getElementById('tapdotPopupCaption');
-            if (popup && photoEl && captionEl) {
-                photoEl.src = cfg.photo || '';
-                photoEl.alt = cfg.caption || '';
-                captionEl.textContent = cfg.caption || '';
-                popup.classList.add('show');
-                document.getElementById('overlay-ui').classList.add('active');
-                window.isTapdotPopupOpen = true;
+            if (cfg.icon === 'info') {
+                if (visibleInfoLabelTapDot === closestDot) {
+                    closestDot.infoLabelTargetOpacity = 0;
+                } else {
+                    if (visibleInfoLabelTapDot) visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
+                    closestDot.infoTextPlane.visible = true;
+                    closestDot.infoTextPlane.material.opacity = 0;
+                    closestDot.infoLabelTargetOpacity = 1;
+                    visibleInfoLabelTapDot = closestDot;
+                }
+            } else {
+                const popup = document.getElementById('tapdotPopup');
+                const photoEl = document.getElementById('tapdotPopupPhoto');
+                const captionEl = document.getElementById('tapdotPopupCaption');
+                if (popup && photoEl && captionEl) {
+                    photoEl.src = cfg.photo || '';
+                    photoEl.alt = cfg.caption || '';
+                    captionEl.textContent = cfg.caption || '';
+                    popup.classList.add('show');
+                    document.getElementById('overlay-ui').classList.add('active');
+                    window.isTapdotPopupOpen = true;
+                }
             }
         } else {
+            if (visibleInfoLabelTapDot) {
+                visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
+            }
             console.log('No TapDot detected');
         }
     });
@@ -1814,6 +1886,9 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         }
         if (window.isTapdotPopupOpen) {
             closeTapdotPopup();
+        }
+        if (visibleInfoLabelTapDot) {
+            visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
         }
     });
 
