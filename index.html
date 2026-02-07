@@ -790,37 +790,27 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         }
     };
 
-    // Hotspot configurations (regular)
-    const hotspotConfigurations = [
-        { text: 'Chicken Coop', position: { x: 0.15, y: 0.25, z: 0.25 }, scale: 0.3 },
-        { text: 'Covered Round Pen', position: { x: 0.45, y: 0.28, z: 0.05 }, scale: 0.3 },
-        { text: 'European Barn', position: { x: 0.78, y: 0.32, z: -0.12 }, scale: 0.3 },
-        { text: 'Garage Workshop (No Photos)', position: { x: 1.05, y: 0.38, z: -0.28 }, scale: 0.3 },
-        { text: 'Greenhouse', position: { x: 0.12, y: 0.22, z: 0.52 }, scale: 0.3 },
-        { text: 'Hay Storage (No Photos)', position: { x: 0.62, y: 0.30, z: 0.28 }, scale: 0.3 },
-        { text: 'Heritage Barn', position: { x: 0.88, y: 0.35, z: 0.08 }, scale: 0.3 },
-        { text: 'Indoor Riding Arena', position: { x: 0.32, y: 0.26, z: -0.02 }, scale: 0.3 },
-        { text: 'Main Residence', position: { x: 0.72, y: 0.42, z: 0.42 }, scale: 0.3 },
-        { text: 'Outdoor Riding Arena', position: { x: 0.38, y: 0.27, z: 0.18 }, scale: 0.3 },
-        { text: 'Playground', position: { x: 0.08, y: 0.24, z: 0.38 }, scale: 0.3 },
-        { text: 'Trail Riding Course', position: { x: 0.85, y: 0.45, z: 0.22 }, scale: 0.3 },
-    ];
-
-    // "Sold" hotspot configuration (new separate 'Sold' class)
-    // Added a 'verticalOffset' to allow controlling its height offset
+    // "Sold" hotspot configuration (optional overlay text)
     const soldHotspotConfigurations = [
-        //{ 
-            //text: 'SOLD', 
-           // position: { x: 0.22, y: 0.5, z: -0.85 }, 
-            //scale: 0.2,
-           // verticalOffset: 0.06 // You can adjust this to move the text up/down while rotating around the same center
-        //},
+        //{ text: 'SOLD', position: { x: 0.22, y: 0.5, z: -0.85 }, scale: 0.2, verticalOffset: 0.06 },
     ];
 
-    // Centralized control section for TapDots (y = 0.6, x/z spread ±2 from center)
+    // TapDots: info icons (No Photos) = label pops up above; camera icons = photo popup with caption
     const tapDotConfigurations = [
-        { position: { x: 1.2, y: 0.6, z: -0.5 }, scale: 1, icon: 'info', photo: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=1200', caption: 'A quiet moment on the ranch.' },
-        { position: { x: -1.1, y: 0.6, z: 0.8 }, scale: 1, icon: 'camera', photo: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200', caption: 'Wide open spaces and mountain views.' },
+        // Camera icons (have photos) - caption = bio/description in photo popup
+        { position: { x: 0.15, y: 0.25, z: 0.25 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Chicken Coop/1.jpg', caption: 'Chicken Coop' },
+        { position: { x: 0.45, y: 0.28, z: 0.05 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Covered Round Pen/1.jpg', caption: 'Covered Round Pen' },
+        { position: { x: 0.78, y: 0.32, z: -0.12 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/European Barn/1.jpg', caption: 'European Barn' },
+        { position: { x: 0.12, y: 0.22, z: 0.52 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Greenhouse/1.jpg', caption: 'Greenhouse' },
+        { position: { x: 0.88, y: 0.35, z: 0.08 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Heritage Barn/1.jpg', caption: 'Heritage Barn' },
+        { position: { x: 0.32, y: 0.26, z: -0.02 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Indoor Riding Arena/1.jpg', caption: 'Indoor Riding Arena' },
+        { position: { x: 0.72, y: 0.42, z: 0.42 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Main Residence/1.jpg', caption: 'Main Residence' },
+        { position: { x: 0.38, y: 0.27, z: 0.18 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Outdoor Riding Arena/1.jpg', caption: 'Outdoor Riding Arena' },
+        { position: { x: 0.08, y: 0.24, z: 0.38 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Playground/1.jpg', caption: 'Playground' },
+        { position: { x: 0.85, y: 0.45, z: 0.22 }, scale: 0.3, icon: 'camera', photo: '3D Model Folders/Trail Riding Course/1.jpg', caption: 'Trail Riding Course' },
+        // Info icons (No Photos) - caption = label that pops up above icon
+        { position: { x: 1.05, y: 0.38, z: -0.28 }, scale: 0.3, icon: 'info', caption: 'Garage Workshop' },
+        { position: { x: 0.62, y: 0.30, z: 0.28 }, scale: 0.3, icon: 'info', caption: 'Hay Storage' },
     ];
 
     // Tap detection: scale with visual size (so hit area matches apparent dot size)
@@ -1184,11 +1174,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         });
     }
 
-    // Create normal hotspots (unchanged logic)
-    const totalHotspots = hotspotConfigurations.length;
-    const hotspots = hotspotConfigurations.map((config, index) => createHotspot(config, index, totalHotspots));
-
-    // Create "Sold" hotspots (new function, same concept but no sphere + orange text)
+    // Create "Sold" hotspots (optional overlay text)
     const soldHotspots = soldHotspotConfigurations.map((config) => createSoldHotspot(config));
 
     function calculateMaxDistance() {
@@ -1288,56 +1274,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     });
     requestAnimationFrame(fadeInBorders);
 
-    // Original hotspot creation function (unchanged)
-    function createHotspot(hotspotConfig, index, totalHotspots) {
-        const { text, position, scale } = hotspotConfig;
-        let dotGeometry = new SphereGeometry(0.03, 32, 32);
-        let dotMaterial = new MeshBasicMaterial({ color: 0xffffff });
-        let dot = new Mesh(dotGeometry, dotMaterial);
-        dot.position.set(position.x, position.y, position.z);
-        dot.scale.setScalar(scale);
-        scene.add(dot);
-
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.width = 3072;
-        canvas.height = 512;
-        context.fillStyle = 'rgba(255, 255, 255, 0)';
-        context.fillRect(0, 0, canvas.width, canvas.height);
-        context.font = '520 250px "Helvetica Neue", Helvetica, Arial, sans-serif';
-        context.textAlign = 'center';
-        context.textBaseline = 'middle';
-        context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-        context.lineWidth = 5;
-        context.fillStyle = 'white';
-        context.fillText(text, canvas.width / 2, canvas.height / 2);
-        context.strokeText(text, canvas.width / 2, canvas.height / 2);
-
-        const texture = new Texture(canvas);
-        texture.needsUpdate = true;
-        const geometry = new PlaneGeometry(2.4, 0.4);
-        const material = new MeshStandardMaterial({
-            map: texture,
-            transparent: false,
-            alphaTest: 0.5,
-            side: DoubleSide,
-            premultipliedAlpha: true,
-            emissive: 'white',
-            emissiveIntensity: 2,
-        });
-        const textPlane = new Mesh(geometry, material);
-        textPlane.position.set(position.x, position.y, position.z);
-        textPlane.rotation.y = MathUtils.degToRad(90);
-        textPlane.scale.setScalar(scale);
-
-        const yTranslation = 0.3 - (index / totalHotspots) * 0.05;
-        textPlane.geometry.translate(0, yTranslation, 0);
-        scene.add(textPlane);
-
-        return { dot, textPlane };
-    }
-
-    // New "Sold" hotspot creation function
+    // "Sold" hotspot creation function
     // Identical to createHotspot except:
     // - No sphere is created
     // - The text color is orange (#FF4F40 here)
@@ -1539,11 +1476,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
 
         camera.lookAt(controls.target);
     }
-
-        // Make normal hotspot text always face the camera
-        hotspots.forEach(hotspot => {
-            hotspot.textPlane.lookAt(camera.position);
-        });
 
         // Make "Sold" hotspot text always face the camera
         soldHotspots.forEach(sold => {
