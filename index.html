@@ -1419,6 +1419,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
         parameters.scene.maxDistanceFromCenter = calculateMaxDistance();
+        hiddenCanvas.width = window.innerWidth;
+        hiddenCanvas.height = window.innerHeight;
     });
 
     let angle = parameters.animation.initialAngle !== undefined 
@@ -1611,12 +1613,15 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     window.addEventListener('touchstart', () => autoRotate = false);
 
     window.addEventListener('click', (event) => {
-        const x = event.clientX;
-        const y = event.clientY;
-        renderHiddenCanvas();
-        const pixelData = hiddenContext.getImageData(x, y, 1, 1).data;
-        const tappedColor = `#${pixelData[0].toString(16).padStart(2, '0')}${pixelData[1].toString(16).padStart(2, '0')}${pixelData[2].toString(16).padStart(2, '0')}`;
-        console.log(`Tapped color: ${tappedColor}`);
+        if (window.isTapdotPopupOpen || isDetailsOpen) return;
+        if (event.target.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container')) return;
+        const x = Math.floor(event.clientX);
+        const y = Math.floor(event.clientY);
+        if (x < 0 || x >= hiddenCanvas.width || y < 0 || y >= hiddenCanvas.height) return;
+        try {
+            renderHiddenCanvas();
+            hiddenContext.getImageData(x, y, 1, 1);
+        } catch (e) { return; }
 
         let closestDot = null;
         let closestDistance = Infinity;
@@ -1944,10 +1949,10 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (!tapdotPopup) return;
         window.isTapdotPopupOpen = false;
         tapdotPopup.classList.remove('show');
+        if (!isDetailsOpen) overlayUI.classList.remove('active');
         setTimeout(() => {
             tapdotPopup.style.width = '';
             tapdotPopup.style.height = '';
-            if (!isDetailsOpen) overlayUI.classList.remove('active');
         }, 320);
     }
 
