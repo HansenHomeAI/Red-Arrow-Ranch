@@ -1156,27 +1156,27 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     // Centralized control section for BorderDots and BorderLines (lot lines slope: y=-0.07 at max Z, y=-0.16 at min Z, delta 0.09)
     // Vertices trace: outer property boundary + internal parcel divisions (NW 8.56, NE 8.56, South 19.44 acres)
     const borderDotPositions = [
-        { name: 'Lot_V1', position: { x: 0.619899, y: -0.07036, z: 0.910146 } },
-        { name: 'Lot_V4', position: { x: 0.613988, y: -0.12755, z: -0.646242 } },
-        { name: 'Lot_V5', position: { x: 0.432838, y: -0.13210, z: -0.769965 } },
-        { name: 'Lot_V6', position: { x: 0.356929, y: -0.13512, z: -0.852191 } },
-        { name: 'Lot_V7', position: { x: 0.134329, y: -0.13700, z: -0.90331 } },
-        { name: 'Lot_V8', position: { x: 0.047765, y: -0.13956, z: -0.972969 } },
-        { name: 'Lot_V9', position: { x: -0.858899, y: -0.15215, z: -1.315852 } },
-        { name: 'Lot_V10', position: { x: -0.903571, y: -0.15339, z: -1.3497 } },
-        { name: 'Lot_V11', position: { x: -1.741621, y: -0.16, z: -1.529842 } },
-        { name: 'Lot_V12', position: { x: -1.877436, y: -0.11047, z: -0.181094 } },
-        { name: 'Lot_V13', position: { x: -1.830478, y: -0.07, z: 0.921714 } },
-        { name: 'Lot_V15', position: { x: -0.851375, y: -0.11934, z: -0.344962 } },
-        { name: 'Lot_V16', position: { x: -0.860571, y: -0.07036, z: 0.910337 } },
-        { name: 'Lot_V18', position: { x: 0.608931, y: -0.09546, z: 0.230155 } },
-        { name: 'Lot_V19', position: { x: -0.907887, y: -0.15527, z: -1.432879 } },
-        { name: 'Lot_V20', position: { x: -0.970607, y: -0.15930, z: -1.52137 } },
-        { name: 'Lot_V21', position: { x: 0.480793, y: -0.09784, z: 0.164791 } },
-        { name: 'Lot_V22', position: { x: -0.208798, y: -0.14121, z: -1.079954 } },
-        { name: 'Lot_V23', position: { x: -0.68705, y: -0.14994, z: -1.24425 } },
-        { name: 'Lot_V24', position: { x: -0.520112, y: -0.14424, z: -1.139954 } },
-        { name: 'Lot_V25', position: { x: -0.140558, y: -0.13954, z: -1.024829 } }
+        { name: 'Lot_V1', position: { x: 0.619899, y: -0.07236, z: 0.910146 } },
+        { name: 'Lot_V4', position: { x: 0.613988, y: -0.12955, z: -0.646242 } },
+        { name: 'Lot_V5', position: { x: 0.432838, y: -0.1341, z: -0.769965 } },
+        { name: 'Lot_V6', position: { x: 0.356929, y: -0.13712, z: -0.852191 } },
+        { name: 'Lot_V7', position: { x: 0.134329, y: -0.139, z: -0.90331 } },
+        { name: 'Lot_V8', position: { x: 0.047765, y: -0.14156, z: -0.972969 } },
+        { name: 'Lot_V9', position: { x: -0.858899, y: -0.15415, z: -1.315852 } },
+        { name: 'Lot_V10', position: { x: -0.903571, y: -0.15539, z: -1.3497 } },
+        { name: 'Lot_V11', position: { x: -1.743049, y: -0.152, z: -1.527306 } },
+        { name: 'Lot_V12', position: { x: -1.877436, y: -0.105, z: -0.181094 } },
+        { name: 'Lot_V13', position: { x: -1.830478, y: -0.06, z: 0.921714 } },
+        { name: 'Lot_V15', position: { x: -0.851375, y: -0.12134, z: -0.344962 } },
+        { name: 'Lot_V16', position: { x: -0.860571, y: -0.07236, z: 0.910337 } },
+        { name: 'Lot_V18', position: { x: 0.608931, y: -0.09746, z: 0.230155 } },
+        { name: 'Lot_V19', position: { x: -0.907887, y: -0.15727, z: -1.432879 } },
+        { name: 'Lot_V20', position: { x: -0.970607, y: -0.1613, z: -1.52137 } },
+        { name: 'Lot_V21', position: { x: 0.480793, y: -0.09984, z: 0.164791 } },
+        { name: 'Lot_V22', position: { x: -0.208798, y: -0.14321, z: -1.079954 } },
+        { name: 'Lot_V23', position: { x: -0.68705, y: -0.15194, z: -1.24425 } },
+        { name: 'Lot_V24', position: { x: -0.520112, y: -0.14624, z: -1.139954 } },
+        { name: 'Lot_V25', position: { x: -0.140558, y: -0.14154, z: -1.024829 } }
     ];
 
     let borderLineConnections = [
@@ -1952,11 +1952,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     // Update camera animation in the main animation loop
     function updateCameraAnimation() {
         if (!isAnimatingToNorth) return;
-        if (lotEditState.active) {
-            isAnimatingToNorth = false;
-            return;
-        }
-        
+
         const elapsed = performance.now() - animationStartTime;
         const progress = Math.min(elapsed / animationDuration, 1);
         const easedProgress = easeOutCubic(progress);
@@ -2584,8 +2580,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             };
             autoRotate = false;
             isAnimatingToNorth = false;
-            controls.enableRotate = false;
-            alignCameraToLotEditorView();
             if (!lotEditState.selectedVertexName || !borderDots[lotEditState.selectedVertexName]) {
                 selectBorderVertex(Object.keys(borderDots)[0] || null);
             } else {
@@ -2840,11 +2834,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
 
     // Add click listener for compass button
     compassButton.addEventListener('mouseup', () => {
-        if (lotEditState.active) {
-            alignCameraToLotEditorView();
-            setLotEditorStatus('Top-down north view reset.');
-            return;
-        }
         animateCameraToNorth();
     });
 
