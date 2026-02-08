@@ -905,29 +905,53 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     // Tap detection: scale with visual size (so hit area matches apparent dot size)
     const tapRadiusMultiplier = 1.6; // Hit area = visible dot radius * this (slightly larger for easier tap)
 
-    // Centralized control section for BorderDots and BorderLines
+    // Centralized control section for BorderDots and BorderLines (lot lines at y=0.1)
+    // Vertices trace: outer property boundary + internal parcel divisions (NW 8.56, NE 8.56, South 19.44 acres)
     const borderDotPositions = [
-    
-    //{ name: 'BorderDot_400', position: { x: 0, y: 0, z: 0 } },
-    //{ name: 'BorderDot_401', position: { x: 1, y: 0, z: 0 } },
-    //{ name: 'BorderDot_43', position: { x: 0.1, y: -0.55, z: -2.1 } },
-    //{ name: 'BorderDot_44', position: { x: 0.1, y: -0.55, z: -2.2 } },
-   
-    
-
-
-
-
-       
-
+        // Outer boundary - clockwise from NW (irregular shape, broad north, narrow south, W indentation)
+        // Rotated 90° clockwise from bird's eye view (x'=z, z'=-x)
+        { name: 'Lot_V1', position: { x: 0.48, y: 0.1, z: 0.02 } },
+        { name: 'Lot_V2', position: { x: 0.55, y: 0.1, z: -0.12 } },
+        { name: 'Lot_V3', position: { x: 0.58, y: 0.1, z: -0.35 } },
+        { name: 'Lot_V4', position: { x: 0.56, y: 0.1, z: -0.58 } },
+        { name: 'Lot_V5', position: { x: 0.50, y: 0.1, z: -0.82 } },
+        { name: 'Lot_V6', position: { x: 0.38, y: 0.1, z: -1.02 } },
+        { name: 'Lot_V7', position: { x: 0.15, y: 0.1, z: -1.08 } },
+        { name: 'Lot_V8', position: { x: -0.15, y: 0.1, z: -1.02 } },
+        { name: 'Lot_V9', position: { x: -0.42, y: 0.1, z: -0.88 } },
+        { name: 'Lot_V10', position: { x: -0.52, y: 0.1, z: -0.55 } },
+        { name: 'Lot_V11', position: { x: -0.45, y: 0.1, z: -0.25 } },
+        { name: 'Lot_V12', position: { x: -0.30, y: 0.1, z: -0.02 } },
+        { name: 'Lot_V13', position: { x: 0.05, y: 0.1, z: 0.05 } },
+        { name: 'Lot_V14', position: { x: 0.28, y: 0.1, z: 0.02 } },
+        // Internal parcel divisions - junction and boundary intersection points (north center cluster)
+        { name: 'Lot_V15', position: { x: 0.35, y: 0.1, z: -0.50 } },  // Junction: N-S and E-W divisions meet
+        { name: 'Lot_V16', position: { x: 0.20, y: 0.1, z: 0.02 } },   // E-W line west end
+        { name: 'Lot_V17', position: { x: 0.28, y: 0.1, z: -0.98 } },  // E-W line east end
+        { name: 'Lot_V18', position: { x: 0.55, y: 0.1, z: -0.52 } },  // N-S line north end (divides NW/NE parcels)
     ];
 
     const borderLineConnections = [
-        //{ start: 'BorderDot_1', end: 'BorderDot_2' },
-        //{ start: 'BorderDot_2', end: 'BorderDot_3' },
-
-
-        
+        // Outer boundary (closed polygon)
+        { start: 'Lot_V1', end: 'Lot_V2' },
+        { start: 'Lot_V2', end: 'Lot_V3' },
+        { start: 'Lot_V3', end: 'Lot_V4' },
+        { start: 'Lot_V4', end: 'Lot_V5' },
+        { start: 'Lot_V5', end: 'Lot_V6' },
+        { start: 'Lot_V6', end: 'Lot_V7' },
+        { start: 'Lot_V7', end: 'Lot_V8' },
+        { start: 'Lot_V8', end: 'Lot_V9' },
+        { start: 'Lot_V9', end: 'Lot_V10' },
+        { start: 'Lot_V10', end: 'Lot_V11' },
+        { start: 'Lot_V11', end: 'Lot_V12' },
+        { start: 'Lot_V12', end: 'Lot_V13' },
+        { start: 'Lot_V13', end: 'Lot_V14' },
+        { start: 'Lot_V14', end: 'Lot_V1' },
+        // E-W internal line (divides north parcels from south Water Plan parcel)
+        { start: 'Lot_V16', end: 'Lot_V15' },
+        { start: 'Lot_V15', end: 'Lot_V17' },
+        // N-S internal line (divides NW 8.56 from NE 8.56 parcel)
+        { start: 'Lot_V18', end: 'Lot_V15' },
     ];
 
     // Border Dot Parameters
