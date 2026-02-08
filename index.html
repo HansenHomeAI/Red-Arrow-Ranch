@@ -1135,19 +1135,19 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     // Camera icons use photos[] array for carousel; add more paths to include more images per location
     const tapDotConfigurations = [
         // Camera icons (have photos) - photos[] = carousel images, caption = bio in popup
-        { position: { x: 0.15, y: 0.25, z: 0.25 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Chicken Coop/1.jpg', '3D Model Folders/Chicken Coop/2.jpg', '3D Model Folders/Chicken Coop/3.jpg'], caption: 'Chicken Coop' },
+        { position: { x: -0.316441, y: 0.25, z: 0.729589 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Chicken Coop/1.jpg', '3D Model Folders/Chicken Coop/2.jpg', '3D Model Folders/Chicken Coop/3.jpg'], caption: 'Chicken Coop' },
         { position: { x: 0.45, y: 0.28, z: 0.05 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Covered Round Pen/1.jpg', '3D Model Folders/Covered Round Pen/2.jpg'], caption: 'Covered Round Pen' },
         { position: { x: 0.78, y: 0.32, z: -0.12 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/European Barn/1.jpg', '3D Model Folders/European Barn/2.jpg', '3D Model Folders/European Barn/3.jpg', '3D Model Folders/European Barn/4.jpg', '3D Model Folders/European Barn/5.jpg', '3D Model Folders/European Barn/6.jpg'], caption: 'European Barn' },
-        { position: { x: 0.12, y: 0.22, z: 0.52 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Greenhouse/1.jpg', '3D Model Folders/Greenhouse/2.jpg'], caption: 'Greenhouse' },
+        { position: { x: -0.544735, y: 0.22, z: 0.721084 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Greenhouse/1.jpg', '3D Model Folders/Greenhouse/2.jpg'], caption: 'Greenhouse' },
         { position: { x: 0.88, y: 0.35, z: 0.08 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Heritage Barn/1.jpg', '3D Model Folders/Heritage Barn/2.jpg', '3D Model Folders/Heritage Barn/3.jpg', '3D Model Folders/Heritage Barn/4.jpg', '3D Model Folders/Heritage Barn/5.jpg', '3D Model Folders/Heritage Barn/6.jpg', '3D Model Folders/Heritage Barn/7.jpg', '3D Model Folders/Heritage Barn/8.jpg'], caption: 'Heritage Barn' },
         { position: { x: 0.32, y: 0.26, z: -0.02 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Indoor Riding Arena/1.jpg', '3D Model Folders/Indoor Riding Arena/2.jpg', '3D Model Folders/Indoor Riding Arena/3.jpg'], caption: 'Indoor Riding Arena' },
         { position: { x: 0.72, y: 0.42, z: 0.42 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Main Residence/1.jpg', '3D Model Folders/Main Residence/2.jpg', '3D Model Folders/Main Residence/3.jpg', '3D Model Folders/Main Residence/4.jpg', '3D Model Folders/Main Residence/5.jpg', '3D Model Folders/Main Residence/6.jpg', '3D Model Folders/Main Residence/7.jpg', '3D Model Folders/Main Residence/8.jpg', '3D Model Folders/Main Residence/9.jpg', '3D Model Folders/Main Residence/10.jpg', '3D Model Folders/Main Residence/11.jpg', '3D Model Folders/Main Residence/12.jpg', '3D Model Folders/Main Residence/13.jpg'], caption: 'Main Residence' },
         { position: { x: 0.38, y: 0.27, z: 0.18 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Outdoor Riding Arena/1.jpg', '3D Model Folders/Outdoor Riding Arena/2.jpg'], caption: 'Outdoor Riding Arena' },
-        { position: { x: 0.08, y: 0.24, z: 0.38 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Playground/1.jpg', '3D Model Folders/Playground/2.jpg', '3D Model Folders/Playground/3.jpg', '3D Model Folders/Playground/4.jpg'], caption: 'Playground' },
+        { position: { x: -0.427791, y: 0.24, z: 0.725051 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Playground/1.jpg', '3D Model Folders/Playground/2.jpg', '3D Model Folders/Playground/3.jpg', '3D Model Folders/Playground/4.jpg'], caption: 'Playground' },
         { position: { x: 0.85, y: 0.45, z: 0.22 }, scale: 0.3, icon: 'camera', photos: ['3D Model Folders/Trail Riding Course/1.jpg'], caption: 'Trail Riding Course' },
         // Info icons (No Photos) - caption = label that pops up above icon
         { position: { x: 1.05, y: 0.38, z: -0.28 }, scale: 0.3, icon: 'info', caption: 'Garage Workshop' },
-        { position: { x: 0.62, y: 0.30, z: 0.28 }, scale: 0.3, icon: 'info', caption: 'Hay Storage' },
+        { position: { x: 0.62, y: 0.3, z: 0.28 }, scale: 0.3, icon: 'info', caption: 'Hay Storage' },
     ];
 
     // Tap detection: scale with visual size (so hit area matches apparent dot size)
@@ -1235,7 +1235,12 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         mergeHoldMs: 1500,
         midpointMinScreenDistancePx: 130,
         midpointMinSpacingPx: 44,
-        midpointMaxButtons: 10
+        midpointMaxButtons: 10,
+        draggingTapDot: null,
+        draggingTapDotPointerId: null,
+        draggingTapDotPlaneY: 0,
+        lastTapDotPointerDownTime: 0,
+        lastTapDotPointerDownTarget: null
     };
 
     // Base sizes for TapDots and Icons
@@ -1754,6 +1759,18 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         return closestVertex;
     }
 
+    function getTapDotHit(event) {
+        if (!tapDots.length) return null;
+        setPointerFromEvent(event);
+        const tapDotMeshes = tapDots.map((t) => t.dot);
+        const intersections = lotEditState.dragRaycaster.intersectObjects(tapDotMeshes, false);
+        if (intersections.length) {
+            const hitMesh = intersections[0].object;
+            return tapDots.find((t) => t.dot === hitMesh) || null;
+        }
+        return null;
+    }
+
     let nextBorderVertexId = borderDotPositions.reduce((maxId, dotData) => {
         const id = parseInt(String(dotData.name).replace('Lot_V', ''), 10);
         return Number.isFinite(id) ? Math.max(maxId, id) : maxId;
@@ -2057,78 +2074,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         });
 
         if (closestDot) {
-            const cfg = closestDot.config;
-            if (cfg.icon === 'info') {
-                if (visibleInfoLabelTapDot === closestDot) {
-                    closestDot.infoLabelTargetOpacity = 0;
-                } else {
-                    if (visibleInfoLabelTapDot) visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
-                    closestDot.infoTextPlane.visible = true;
-                    closestDot.infoTextPlane.material.opacity = 0;
-                    closestDot.infoLabelTargetOpacity = 1;
-                    visibleInfoLabelTapDot = closestDot;
-                }
-            } else {
-                const popup = document.getElementById('tapdotPopup');
-                const photoEl = document.getElementById('tapdotPopupPhoto');
-                const captionEl = document.getElementById('tapdotPopupCaption');
-                const photos = cfg.photos || (cfg.photo ? [cfg.photo] : []);
-                if (popup && photoEl && captionEl) {
-                    photoEl.alt = cfg.caption || '';
-                    captionEl.textContent = cfg.caption || '';
-                    window.tapdotCarouselPhotos = photos;
-                    window.tapdotCarouselIndex = 0;
-                    const carouselNav = document.getElementById('tapdotCarouselNav');
-                    const dotsContainer = document.getElementById('tapdotCarouselDots');
-                    if (photos.length > 1) {
-                        carouselNav.classList.remove('hidden');
-                        carouselNav.classList.add('visible');
-                        dotsContainer.innerHTML = '';
-                        for (let i = 0; i < photos.length; i++) {
-                            const dot = document.createElement('div');
-                            dot.className = 'tapdot-carousel-dot' + (i === 0 ? ' active' : '');
-                            dot.setAttribute('data-index', i);
-                            dotsContainer.appendChild(dot);
-                        }
-                    } else {
-                        carouselNav.classList.add('hidden');
-                        carouselNav.classList.remove('visible');
-                        dotsContainer.innerHTML = '';
-                    }
-                    const firstSrc = photos[0] || '';
-                    photoEl.src = firstSrc;
-                    popup.style.width = '';
-                    popup.style.height = '';
-                    document.getElementById('overlay-ui').classList.add('active');
-                    window.isTapdotPopupOpen = true;
-                    const showPopup = () => {
-                        popup.classList.add('show');
-                    };
-                    if (firstSrc) {
-                        const img = new Image();
-                        img.onload = () => {
-                            const maxW = window.innerWidth - 48;
-                            const maxH = window.innerHeight - 80;
-                            let w = img.naturalWidth;
-                            let h = img.naturalHeight;
-                            if (w > maxW || h > maxH) {
-                                const r = Math.min(maxW / w, maxH / h);
-                                w = Math.round(w * r);
-                                h = Math.round(h * r);
-                            }
-                            popup.style.width = w + 'px';
-                            popup.style.height = h + 'px';
-                            requestAnimationFrame(() => requestAnimationFrame(showPopup));
-                        };
-                        img.src = firstSrc;
-                        if (img.complete) img.onload();
-                    } else {
-                        popup.style.width = 'min(90vw, 800px)';
-                        popup.style.height = 'min(85vh, 600px)';
-                        requestAnimationFrame(() => requestAnimationFrame(showPopup));
-                    }
-                }
-            }
+            showTapDotContent(closestDot);
         } else {
             if (visibleInfoLabelTapDot) {
                 visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
@@ -2354,10 +2300,31 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             .map((connection) => ({ start: connection.start, end: connection.end }));
     }
 
+    function getSerializedTapDotPositions() {
+        return tapDots.map((tapDot) => {
+            const pos = tapDot.dot.position;
+            const cfg = tapDot.config;
+            const item = {
+                position: {
+                    x: +pos.x.toFixed(6),
+                    y: +pos.y.toFixed(6),
+                    z: +pos.z.toFixed(6)
+                },
+                scale: cfg.scale ?? 1,
+                icon: cfg.icon || 'info'
+            };
+            if (cfg.caption) item.caption = cfg.caption;
+            if (cfg.photos && cfg.photos.length) item.photos = cfg.photos;
+            else if (cfg.photo) item.photo = cfg.photo;
+            return item;
+        });
+    }
+
     function buildLotGeometryPayload() {
         return {
             borderDotPositions: getSerializedBorderDotPositions(),
             borderLineConnections: getSerializedBorderLineConnections(),
+            tapDotPositions: getSerializedTapDotPositions(),
             metadata: {
                 northDirection: parameters.compass.northDirection
             }
@@ -2463,7 +2430,21 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         return true;
     }
 
+    function endTapDotDrag() {
+        if (!lotEditState.draggingTapDot) return;
+        lotEditState.draggingTapDot = null;
+        lotEditState.draggingTapDotPointerId = null;
+        controls.enabled = true;
+        if (lotEditState.active) {
+            setLotEditorStatus('Drag vertices or tap dots to reposition. Use + to insert points, hold for 1.5s to merge.');
+        }
+    }
+
     function endLotVertexDrag(clearOnly = false) {
+        if (lotEditState.draggingTapDot) {
+            endTapDotDrag();
+            return;
+        }
         if (!lotEditState.dragging.active && !clearOnly) return;
         lotEditState.dragging.active = false;
         lotEditState.dragging.pointerId = null;
@@ -2481,9 +2462,112 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             if (selectedName && borderDots[selectedName]) {
                 setLotEditorStatus(`Selected ${selectedName} (${getConnectionCountForVertex(selectedName)} connections).`);
             } else {
-                setLotEditorStatus('Drag vertices, use + to insert points, hold for 1.5s to merge.');
+                setLotEditorStatus('Drag vertices or tap dots to reposition. Use + to insert points, hold for 1.5s to merge.');
             }
         }
+    }
+
+    function showTapDotContent(tapDot) {
+        if (!tapDot) return;
+        const cfg = tapDot.config;
+        if (cfg.icon === 'info') {
+            if (visibleInfoLabelTapDot === tapDot) {
+                tapDot.infoLabelTargetOpacity = 0;
+            } else {
+                if (visibleInfoLabelTapDot) visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
+                tapDot.infoTextPlane.visible = true;
+                tapDot.infoTextPlane.material.opacity = 0;
+                tapDot.infoLabelTargetOpacity = 1;
+                visibleInfoLabelTapDot = tapDot;
+            }
+        } else {
+            const popup = document.getElementById('tapdotPopup');
+            const photoEl = document.getElementById('tapdotPopupPhoto');
+            const captionEl = document.getElementById('tapdotPopupCaption');
+            const photos = cfg.photos || (cfg.photo ? [cfg.photo] : []);
+            if (popup && photoEl && captionEl) {
+                photoEl.alt = cfg.caption || '';
+                captionEl.textContent = cfg.caption || '';
+                window.tapdotCarouselPhotos = photos;
+                window.tapdotCarouselIndex = 0;
+                const carouselNav = document.getElementById('tapdotCarouselNav');
+                const dotsContainer = document.getElementById('tapdotCarouselDots');
+                if (photos.length > 1) {
+                    carouselNav.classList.remove('hidden');
+                    carouselNav.classList.add('visible');
+                    dotsContainer.innerHTML = '';
+                    for (let i = 0; i < photos.length; i++) {
+                        const dot = document.createElement('div');
+                        dot.className = 'tapdot-carousel-dot' + (i === 0 ? ' active' : '');
+                        dot.setAttribute('data-index', i);
+                        dotsContainer.appendChild(dot);
+                    }
+                } else {
+                    carouselNav.classList.add('hidden');
+                    carouselNav.classList.remove('visible');
+                    dotsContainer.innerHTML = '';
+                }
+                const firstSrc = photos[0] || '';
+                photoEl.src = firstSrc;
+                popup.style.width = '';
+                popup.style.height = '';
+                document.getElementById('overlay-ui').classList.add('active');
+                window.isTapdotPopupOpen = true;
+                const showPopup = () => {
+                    popup.classList.add('show');
+                };
+                if (firstSrc) {
+                    const img = new Image();
+                    img.onload = () => {
+                        const maxW = window.innerWidth - 48;
+                        const maxH = window.innerHeight - 80;
+                        let w = img.naturalWidth;
+                        let h = img.naturalHeight;
+                        if (w > maxW || h > maxH) {
+                            const r = Math.min(maxW / w, maxH / h);
+                            w = Math.round(w * r);
+                            h = Math.round(h * r);
+                        }
+                        popup.style.width = w + 'px';
+                        popup.style.height = h + 'px';
+                        requestAnimationFrame(() => requestAnimationFrame(showPopup));
+                    };
+                    img.src = firstSrc;
+                    if (img.complete) img.onload();
+                } else {
+                    popup.style.width = 'min(90vw, 800px)';
+                    popup.style.height = 'min(85vh, 600px)';
+                    requestAnimationFrame(() => requestAnimationFrame(showPopup));
+                }
+            }
+        }
+    }
+
+    function beginTapDotDrag(event) {
+        if (!lotEditState.active) return false;
+        if (event.button !== undefined && event.button !== 0) return false;
+        const hitTapDot = getTapDotHit(event);
+        if (!hitTapDot) return false;
+
+        const now = performance.now();
+        if (now - lotEditState.lastTapDotPointerDownTime < 400 && lotEditState.lastTapDotPointerDownTarget === hitTapDot) {
+            lotEditState.lastTapDotPointerDownTime = 0;
+            lotEditState.lastTapDotPointerDownTarget = null;
+            return false;
+        }
+        lotEditState.lastTapDotPointerDownTime = now;
+        lotEditState.lastTapDotPointerDownTarget = hitTapDot;
+
+        lotEditState.draggingTapDot = hitTapDot;
+        lotEditState.draggingTapDotPointerId = event.pointerId;
+        lotEditState.draggingTapDotPlaneY = hitTapDot.dot.position.y;
+        lotEditState.suppressNextClick = true;
+        controls.enabled = false;
+        setLotEditorStatus(`Dragging tap dot. Release to place.`);
+        if (renderer.domElement.setPointerCapture) {
+            renderer.domElement.setPointerCapture(event.pointerId);
+        }
+        return true;
     }
 
     function beginLotVertexDrag(event) {
@@ -2511,7 +2595,28 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         return true;
     }
 
+    function updateTapDotDrag(event) {
+        if (!lotEditState.draggingTapDot) return;
+        if (event.pointerId !== lotEditState.draggingTapDotPointerId) return;
+
+        const tapDot = lotEditState.draggingTapDot;
+        const pointOnPlane = getPointerWorldOnPlane(event, lotEditState.draggingTapDotPlaneY);
+        if (!pointOnPlane) return;
+        tapDot.dot.position.x = pointOnPlane.x;
+        tapDot.dot.position.y = lotEditState.draggingTapDotPlaneY;
+        tapDot.dot.position.z = pointOnPlane.z;
+        if (tapDot.config.position) {
+            tapDot.config.position.x = pointOnPlane.x;
+            tapDot.config.position.y = lotEditState.draggingTapDotPlaneY;
+            tapDot.config.position.z = pointOnPlane.z;
+        }
+    }
+
     function updateLotVertexDrag(event) {
+        if (lotEditState.draggingTapDot) {
+            updateTapDotDrag(event);
+            return;
+        }
         if (!lotEditState.dragging.active) return;
         if (event.pointerId !== lotEditState.dragging.pointerId) return;
 
@@ -2585,7 +2690,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             } else {
                 syncLotEditorInputsFromSelection();
             }
-            setLotEditorStatus('Drag vertices, use + to insert points, hold for 1.5s to merge.');
+            setLotEditorStatus('Drag vertices or tap dots to reposition. Use + to insert points, hold for 1.5s to merge.');
             refreshBorderVisualState();
             updateMidpointButtons();
             return;
@@ -2606,7 +2711,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             controls.enableRotate = true;
             controls.enabled = true;
         }
-        setLotEditorStatus('Enable mode, then drag vertices to adjust boundaries.');
+        setLotEditorStatus('Enable mode, then drag vertices or tap dots to adjust positions.');
         refreshBorderVisualState();
     }
 
@@ -2626,20 +2731,35 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
 
     renderer.domElement.addEventListener('pointerdown', (event) => {
         if (!lotEditState.active) return;
-        const started = beginLotVertexDrag(event);
+        let started = beginLotVertexDrag(event);
+        if (!started) started = beginTapDotDrag(event);
         if (started) {
             event.preventDefault();
             event.stopPropagation();
         }
     }, { passive: false, capture: true });
 
+    renderer.domElement.addEventListener('dblclick', (event) => {
+        if (!lotEditState.active) return;
+        const hitTapDot = getTapDotHit(event);
+        if (hitTapDot) {
+            showTapDotContent(hitTapDot);
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, { passive: false, capture: true });
+
     window.addEventListener('pointermove', (event) => {
-        if (!lotEditState.dragging.active) return;
+        if (!lotEditState.dragging.active && !lotEditState.draggingTapDot) return;
         updateLotVertexDrag(event);
         event.preventDefault();
     }, { passive: false });
 
     window.addEventListener('pointerup', (event) => {
+        if (lotEditState.draggingTapDot) {
+            if (event.pointerId === lotEditState.draggingTapDotPointerId) endLotVertexDrag();
+            return;
+        }
         if (!lotEditState.dragging.active) return;
         if (event.pointerId !== lotEditState.dragging.pointerId) return;
         endLotVertexDrag();
@@ -2664,7 +2784,11 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         try {
             const copied = await copyTextToClipboard(jsonText);
             if (copied) {
-                setLotEditorStatus(`Copied ${payload.borderDotPositions.length} vertices and ${payload.borderLineConnections.length} connections.`);
+                const parts = [`${payload.borderDotPositions.length} vertices`, `${payload.borderLineConnections.length} connections`];
+                if (payload.tapDotPositions && payload.tapDotPositions.length) {
+                    parts.push(`${payload.tapDotPositions.length} tap dots`);
+                }
+                setLotEditorStatus(`Copied ${parts.join(', ')}.`);
                 return;
             }
         } catch (error) {
