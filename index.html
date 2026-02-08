@@ -593,10 +593,11 @@
             justify-content: center;
             cursor: pointer;
             color: white;
+            opacity: 0.5;
             -webkit-transition: opacity 0.2s ease;
             transition: opacity 0.2s ease;
         }
-        .tapdot-carousel-arrow:hover { opacity: 0.8; }
+        .tapdot-carousel-arrow:hover { opacity: 1; }
         .tapdot-carousel-arrow svg {
             width: 22px;
             height: 22px;
@@ -612,16 +613,14 @@
             width: 6px;
             height: 6px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
-            -webkit-transition: background 0.3s ease;
-            transition: background 0.3s ease;
+            -webkit-transition: background 0.2s ease;
+            transition: background 0.2s ease;
         }
-        .tapdot-carousel-dot:hover {
-            background: rgba(255, 255, 255, 0.7);
-        }
+        .tapdot-carousel-dot:hover,
         .tapdot-carousel-dot.active {
-            background: white;
+            background: rgba(255, 255, 255, 1);
         }
         /* Caption overlay: fixed at bottom of popup, gradient + text + dots */
         .tapdot-popup .tapdot-caption-overlay {
@@ -1945,9 +1944,11 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (!tapdotPopup) return;
         window.isTapdotPopupOpen = false;
         tapdotPopup.classList.remove('show');
-        tapdotPopup.style.width = '';
-        tapdotPopup.style.height = '';
-        if (!isDetailsOpen) overlayUI.classList.remove('active');
+        setTimeout(() => {
+            tapdotPopup.style.width = '';
+            tapdotPopup.style.height = '';
+            if (!isDetailsOpen) overlayUI.classList.remove('active');
+        }, 320);
     }
 
     function tapdotCarouselGoTo(idx) {
@@ -1991,6 +1992,21 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             if (dot) { e.stopPropagation(); tapdotCarouselGoTo(parseInt(dot.getAttribute('data-index'), 10)); }
         });
     }
+
+    let tapdotSwipeStartX = 0;
+    const tapdotSwipeThreshold = 50;
+    tapdotPopup.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1 && window.tapdotCarouselPhotos && window.tapdotCarouselPhotos.length > 1) {
+            tapdotSwipeStartX = e.touches[0].clientX;
+        }
+    }, { passive: true });
+    tapdotPopup.addEventListener('touchend', (e) => {
+        if (e.changedTouches.length === 1 && window.tapdotCarouselPhotos && window.tapdotCarouselPhotos.length > 1) {
+            const delta = e.changedTouches[0].clientX - tapdotSwipeStartX;
+            if (delta < -tapdotSwipeThreshold) tapdotCarouselNav(1);
+            else if (delta > tapdotSwipeThreshold) tapdotCarouselNav(-1);
+        }
+    }, { passive: true });
 
     overlayUI.addEventListener('click', () => {
         if (isDetailsOpen) {
