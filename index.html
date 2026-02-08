@@ -730,6 +730,200 @@
             -ms-user-select: none;
             user-select: none;
         }
+
+        /* Lot editor controls */
+        .lot-editor-toggle-wrap {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            z-index: 12;
+        }
+        .lot-editor-toggle {
+            min-width: 126px;
+            height: 45px;
+            border-radius: 23.5px;
+            border: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 16px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.92);
+            background: rgba(128, 128, 128, 0.32);
+            -webkit-backdrop-filter: blur(50px);
+            backdrop-filter: blur(50px);
+            font: 500 13px/1 'Helvetica Neue', Arial, sans-serif;
+            letter-spacing: 0.2px;
+            position: relative;
+            overflow: hidden;
+        }
+        .lot-editor-toggle::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            background: linear-gradient(145deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 41%, rgba(255,255,255,0) 57%, rgba(255,255,255,0.4) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            padding: 1.4px;
+            pointer-events: none;
+        }
+        .lot-editor-toggle svg,
+        .lot-editor-toggle span {
+            position: relative;
+            z-index: 1;
+        }
+        .lot-editor-toggle svg {
+            width: 16px;
+            height: 16px;
+            opacity: 0.9;
+        }
+        .lot-editor-toggle.active {
+            color: #fff;
+            background: rgba(191, 40, 27, 0.45);
+        }
+        .lot-editor-panel {
+            position: absolute;
+            right: 20px;
+            bottom: 76px;
+            z-index: 12;
+            width: 248px;
+            border-radius: 20px;
+            background: rgba(32, 32, 32, 0.5);
+            -webkit-backdrop-filter: blur(45px);
+            backdrop-filter: blur(45px);
+            color: rgba(255, 255, 255, 0.95);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            padding: 14px 14px 12px;
+            box-sizing: border-box;
+            opacity: 0;
+            transform: translateY(8px) scale(0.98);
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .lot-editor-panel::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: inherit;
+            background: linear-gradient(145deg, rgba(255,255,255,0.24) 0%, rgba(255,255,255,0) 41%, rgba(255,255,255,0) 57%, rgba(255,255,255,0.24) 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            padding: 1.2px;
+            pointer-events: none;
+        }
+        .lot-editor-panel.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+        .lot-editor-panel > * {
+            position: relative;
+            z-index: 1;
+        }
+        .lot-editor-title {
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.2px;
+            margin-bottom: 7px;
+        }
+        .lot-editor-status {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.78);
+            margin-bottom: 10px;
+            line-height: 1.35;
+            min-height: 32px;
+        }
+        .lot-editor-vertex {
+            font-size: 12px;
+            margin-bottom: 10px;
+            color: rgba(255, 255, 255, 0.88);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .lot-editor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+        .lot-editor-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            min-width: 0;
+        }
+        .lot-editor-field label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.74);
+        }
+        .lot-editor-field input {
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.32);
+            color: #fff;
+            font: 500 12px/1 'Helvetica Neue', Arial, sans-serif;
+            padding: 8px 8px;
+            box-sizing: border-box;
+            outline: none;
+        }
+        .lot-editor-field input:focus {
+            border-color: rgba(255, 255, 255, 0.42);
+        }
+        .lot-editor-field input:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+        .lot-midpoint-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 11;
+        }
+        .lot-midpoint-plus {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 0;
+            color: #fff;
+            font: 500 20px/30px 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            padding: 0;
+            background: rgba(45, 45, 45, 0.75);
+            -webkit-backdrop-filter: blur(28px);
+            backdrop-filter: blur(28px);
+            box-shadow: 0 3px 16px rgba(0, 0, 0, 0.22);
+            pointer-events: auto;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+        }
+        .lot-midpoint-plus:hover {
+            background: rgba(191, 40, 27, 0.85);
+        }
+        @media (max-width: 720px) {
+            .lot-editor-toggle-wrap {
+                right: 12px;
+                bottom: 12px;
+            }
+            .lot-editor-panel {
+                right: 12px;
+                bottom: 66px;
+                width: min(230px, calc(100vw - 24px));
+            }
+        }
     </style>
 </head>
 <body>
@@ -754,6 +948,37 @@
             <img id="compassIcon" src="https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/NorthOutline.svg" alt="Compass" draggable="false">
         </div>
     </div>
+
+    <div class="lot-editor-toggle-wrap">
+        <button id="lotEditorToggle" class="lot-editor-toggle" type="button" aria-pressed="false" aria-label="Toggle lot edit mode">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 17.5V21h3.5L17.2 10.3l-3.5-3.5L3 17.5z"></path>
+                <path d="M12.4 7.6l3.5 3.5"></path>
+                <path d="M18 6l1.2-1.2a1.8 1.8 0 1 1 2.5 2.5L20.5 8.5"></path>
+            </svg>
+            <span>Edit Lots</span>
+        </button>
+    </div>
+    <div id="lotEditorPanel" class="lot-editor-panel" aria-live="polite">
+        <div class="lot-editor-title">Lot Line Editing</div>
+        <div id="lotEditorStatus" class="lot-editor-status">Enable mode, then drag vertices to adjust boundaries.</div>
+        <div id="lotEditorVertexName" class="lot-editor-vertex">Vertex: none selected</div>
+        <div class="lot-editor-grid">
+            <div class="lot-editor-field">
+                <label for="lotVertexXInput">X</label>
+                <input id="lotVertexXInput" type="number" step="0.001" disabled>
+            </div>
+            <div class="lot-editor-field">
+                <label for="lotVertexYInput">Y</label>
+                <input id="lotVertexYInput" type="number" step="0.001" disabled>
+            </div>
+            <div class="lot-editor-field">
+                <label for="lotVertexZInput">Z</label>
+                <input id="lotVertexZInput" type="number" step="0.001" disabled>
+            </div>
+        </div>
+    </div>
+    <div id="lotMidpointLayer" class="lot-midpoint-layer"></div>
 
     <!-- TapDot popup: photo carousel (tap left/right to navigate), caption at bottom -->
     <div id="tapdotPopup" class="tapdot-popup">
@@ -831,7 +1056,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     }
     </script>
     <script type="module">
-    import { WebGLRenderer, PerspectiveCamera, Scene, Color, Vector3, SphereGeometry, CylinderGeometry, BoxGeometry, MeshBasicMaterial, Mesh, TextureLoader, PlaneGeometry, DoubleSide, MeshStandardMaterial, Texture, MathUtils, Matrix4 } from 'three';
+    import { WebGLRenderer, PerspectiveCamera, Scene, Color, Vector2, Vector3, SphereGeometry, CylinderGeometry, BoxGeometry, MeshBasicMaterial, Mesh, TextureLoader, PlaneGeometry, DoubleSide, MeshStandardMaterial, Texture, MathUtils, Matrix4, Raycaster, Plane } from 'three';
 
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { LumaSplatsThree } from '@lumaai/luma-web';
@@ -931,7 +1156,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         { name: 'Lot_V18', position: { x: 0.55, y: 0.1, z: -0.52 } },  // N-S line north end (divides NW/NE parcels)
     ];
 
-    const borderLineConnections = [
+    let borderLineConnections = [
         // Outer boundary (closed polygon)
         { start: 'Lot_V1', end: 'Lot_V2' },
         { start: 'Lot_V2', end: 'Lot_V3' },
@@ -960,6 +1185,31 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         widthSegments: 16,
         heightSegments: 16,
         color: 0xffa500
+    };
+
+    const lotEditState = {
+        active: false,
+        selectedVertexName: null,
+        pointerNDC: new Vector2(),
+        dragRaycaster: new Raycaster(),
+        dragPlane: new Plane(new Vector3(0, 1, 0), -0.1),
+        dragging: {
+            active: false,
+            pointerId: null,
+            vertexName: null,
+            planeY: 0.1,
+            mergeTargetName: null,
+            mergeHoverStartMs: 0,
+            mergeTimerId: null
+        },
+        midpointButtons: new Map(),
+        suppressNextClick: false,
+        cameraSnapshot: null,
+        mergeScreenDistancePx: 20,
+        mergeHoldMs: 1500,
+        midpointMinScreenDistancePx: 130,
+        midpointMinSpacingPx: 44,
+        midpointMaxButtons: 10
     };
 
     // Base sizes for TapDots and Icons
@@ -1303,12 +1553,13 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         let borderDot = new Mesh(borderDotGeometry, borderDotMaterial);
         borderDot.scale.y = 0.1;
         borderDot.position.set(position.x, position.y, position.z);
+        borderDot.userData.borderVertexName = name;
         scene.add(borderDot);
         return { name, mesh: borderDot };
     }
 
     // ***** ONLY THIS FUNCTION CHANGED TO REMOVE LENGTH-WISE ROLL *****
-    function createBorderLineBetweenDots(dot1, dot2) {
+    function createBorderLineBetweenDots(dot1, dot2, lineOpacity = 0) {
         const start = dot1.position;
         const end = dot2.position;
         const direction = new Vector3().subVectors(end, start);
@@ -1319,7 +1570,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         const boxHeight = 0.08;
 
         const boxGeometry = new BoxGeometry(length, boxHeight, boxThickness);
-        const boxMaterial = new MeshBasicMaterial({ color: borderDotParams.color, transparent: true, opacity: 0 });
+        const boxMaterial = new MeshBasicMaterial({ color: borderDotParams.color, transparent: true, opacity: lineOpacity });
         const box = new Mesh(boxGeometry, boxMaterial);
 
         // We define the local X axis as the direction of the line
@@ -1353,38 +1604,159 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     let fadeDuration = 5;
     let borderDotDelay = 0.9;
     let fadeStartTime = null;
+    let borderLineFadeOpacity = 0;
+    let borderDotFadeOpacity = 0;
+
+    const borderDots = {};
+    const borderLines = [];
+
+    function getScreenPositionFromWorld(worldPosition) {
+        const projected = worldPosition.clone().project(camera);
+        return {
+            x: (projected.x + 1) * 0.5 * window.innerWidth,
+            y: (1 - projected.y) * 0.5 * window.innerHeight,
+            visible: projected.z > -1 && projected.z < 1
+        };
+    }
+
+    function borderConnectionKey(startName, endName) {
+        return [startName, endName].sort().join('|');
+    }
+
+    function getConnectionIndex(startName, endName) {
+        return borderLineConnections.findIndex((connection) =>
+            (connection.start === startName && connection.end === endName) ||
+            (connection.start === endName && connection.end === startName)
+        );
+    }
+
+    function dedupeBorderConnections() {
+        const seen = new Set();
+        borderLineConnections = borderLineConnections.filter((connection) => {
+            if (!borderDots[connection.start] || !borderDots[connection.end]) return false;
+            if (connection.start === connection.end) return false;
+            const key = borderConnectionKey(connection.start, connection.end);
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+    }
+
+    function getVisibleLineOpacity() {
+        return lotEditState.active ? 1 : borderLineFadeOpacity;
+    }
+
+    function getVisibleDotOpacity() {
+        return lotEditState.active ? 1 : borderDotFadeOpacity;
+    }
+
+    function refreshBorderVisualState() {
+        const dotOpacity = getVisibleDotOpacity();
+        const selectedName = lotEditState.selectedVertexName;
+        const mergeTargetName = lotEditState.dragging.mergeTargetName;
+        Object.entries(borderDots).forEach(([name, dotMesh]) => {
+            dotMesh.material.opacity = dotOpacity;
+            dotMesh.material.color.setHex(borderDotParams.color);
+            dotMesh.scale.set(1, 0.1, 1);
+            if (lotEditState.active && name === mergeTargetName) {
+                dotMesh.material.color.setHex(0xbf281b);
+                dotMesh.scale.set(1.2, 0.12, 1.2);
+            } else if (lotEditState.active && name === selectedName) {
+                dotMesh.material.color.setHex(0xffffff);
+                dotMesh.scale.set(1.25, 0.125, 1.25);
+            }
+        });
+        const lineOpacity = getVisibleLineOpacity();
+        borderLines.forEach((lineMesh) => {
+            lineMesh.material.opacity = lineOpacity;
+            lineMesh.material.color.setHex(lotEditState.active ? 0xffb561 : borderDotParams.color);
+        });
+    }
+
+    function rebuildBorderLines() {
+        borderLines.forEach((lineMesh) => {
+            scene.remove(lineMesh);
+            lineMesh.geometry.dispose();
+            lineMesh.material.dispose();
+        });
+        borderLines.length = 0;
+        dedupeBorderConnections();
+        borderLineConnections.forEach((connection) => {
+            const startDot = borderDots[connection.start];
+            const endDot = borderDots[connection.end];
+            if (!startDot || !endDot) return;
+            const lineMesh = createBorderLineBetweenDots(startDot, endDot, getVisibleLineOpacity());
+            lineMesh.userData.borderConnection = { start: connection.start, end: connection.end };
+            borderLines.push(lineMesh);
+        });
+        refreshBorderVisualState();
+    }
+
+    function setPointerFromEvent(event) {
+        const bounds = renderer.domElement.getBoundingClientRect();
+        lotEditState.pointerNDC.x = ((event.clientX - bounds.left) / bounds.width) * 2 - 1;
+        lotEditState.pointerNDC.y = -((event.clientY - bounds.top) / bounds.height) * 2 + 1;
+        lotEditState.dragRaycaster.setFromCamera(lotEditState.pointerNDC, camera);
+    }
+
+    function getPointerWorldOnPlane(event, planeY) {
+        setPointerFromEvent(event);
+        lotEditState.dragPlane.constant = -planeY;
+        const intersection = new Vector3();
+        const hit = lotEditState.dragRaycaster.ray.intersectPlane(lotEditState.dragPlane, intersection);
+        return hit ? intersection : null;
+    }
+
+    function getBorderVertexHit(event) {
+        setPointerFromEvent(event);
+        const vertices = Object.values(borderDots);
+        if (!vertices.length) return null;
+        const intersections = lotEditState.dragRaycaster.intersectObjects(vertices, false);
+        if (intersections.length) return intersections[0].object;
+
+        let closestVertex = null;
+        let closestDistance = Infinity;
+        vertices.forEach((vertexMesh) => {
+            const screen = getScreenPositionFromWorld(vertexMesh.position);
+            if (!screen.visible) return;
+            const distance = Math.hypot(screen.x - event.clientX, screen.y - event.clientY);
+            if (distance < 11 && distance < closestDistance) {
+                closestDistance = distance;
+                closestVertex = vertexMesh;
+            }
+        });
+        return closestVertex;
+    }
+
+    let nextBorderVertexId = borderDotPositions.reduce((maxId, dotData) => {
+        const id = parseInt(String(dotData.name).replace('Lot_V', ''), 10);
+        return Number.isFinite(id) ? Math.max(maxId, id) : maxId;
+    }, 0) + 1;
+
+    function getNextBorderVertexName() {
+        while (borderDots[`Lot_V${nextBorderVertexId}`]) nextBorderVertexId++;
+        const newName = `Lot_V${nextBorderVertexId}`;
+        nextBorderVertexId++;
+        return newName;
+    }
+
+    borderDotPositions.forEach((dotData) => {
+        const createdDot = createBorderDot(dotData);
+        borderDots[createdDot.name] = createdDot.mesh;
+    });
+    rebuildBorderLines();
 
     function fadeInBorders(time) {
         if (!fadeStartTime) fadeStartTime = time;
         let elapsedTime = (time - fadeStartTime) / 1000;
-        let lineOpacity = Math.min(elapsedTime / fadeDuration, 1);
+        borderLineFadeOpacity = Math.min(elapsedTime / fadeDuration, 1);
         let dotElapsedTime = elapsedTime - borderDotDelay;
-        let dotOpacity = Math.min(Math.max(dotElapsedTime / fadeDuration, 0), 1);
-        borderLines.forEach(box => {
-            box.material.opacity = lineOpacity;
-        });
-        Object.values(borderDots).forEach(dot => {
-            dot.material.opacity = dotOpacity;
-        });
-        if (lineOpacity < 1 || dotOpacity < 1) {
+        borderDotFadeOpacity = Math.min(Math.max(dotElapsedTime / fadeDuration, 0), 1);
+        refreshBorderVisualState();
+        if (borderLineFadeOpacity < 1 || borderDotFadeOpacity < 1) {
             requestAnimationFrame(fadeInBorders);
         }
     }
-
-    const borderDots = {};
-    const borderLines = [];
-    borderDotPositions.forEach(dotData => {
-        const createdDot = createBorderDot(dotData);
-        borderDots[createdDot.name] = createdDot.mesh;
-    });
-    borderLineConnections.forEach(connection => {
-        const dot1 = borderDots[connection.start];
-        const dot2 = borderDots[connection.end];
-        if (dot1 && dot2) {
-            const borderLine = createBorderLineBetweenDots(dot1, dot2);
-            borderLines.push(borderLine);
-        }
-    });
     requestAnimationFrame(fadeInBorders);
 
     // "Sold" hotspot creation function
@@ -1445,6 +1817,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         parameters.scene.maxDistanceFromCenter = calculateMaxDistance();
         hiddenCanvas.width = window.innerWidth;
         hiddenCanvas.height = window.innerHeight;
+        updateMidpointButtons();
     });
 
     let angle = parameters.animation.initialAngle !== undefined 
@@ -1497,13 +1870,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         const tolerance = 15; // Degrees tolerance for "pointing at north"
         const isPointingAtNorth = bearingDifference <= tolerance;
         
-        // Debug logging
-        console.log('Camera Bearing:', cameraBearing.toFixed(1), 
-                   'North Direction:', parameters.compass.northDirection, 
-                   'Bearing Diff:', bearingDifference.toFixed(1), 
-                   'Pointing at North:', isPointingAtNorth,
-                   'Icon Rotation:', iconRotation.toFixed(1));
-        
         // Icon URLs
         const outlineIcon = 'https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/NorthOutline.svg';
         const filledIcon = 'https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/NorthFilled.svg';
@@ -1517,7 +1883,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         const targetFilename = targetSrc.split('/').pop();
         
         if (currentFilename !== targetFilename) {
-            console.log('Switching from', currentFilename, 'to', targetFilename);
             compassIcon.src = targetSrc; // Direct switch for now, no animation
         }
         
@@ -1551,7 +1916,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         animationStartTime = performance.now();
         autoRotate = false; // Disable auto-rotation during animation
         
-        console.log('Animating camera to north. Target position:', targetCameraPosition);
     }
 
     // Smooth easing function (ease-out cubic)
@@ -1562,6 +1926,10 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     // Update camera animation in the main animation loop
     function updateCameraAnimation() {
         if (!isAnimatingToNorth) return;
+        if (lotEditState.active) {
+            isAnimatingToNorth = false;
+            return;
+        }
         
         const elapsed = performance.now() - animationStartTime;
         const progress = Math.min(elapsed / animationDuration, 1);
@@ -1576,7 +1944,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         // Animation complete
         if (progress >= 1) {
             isAnimatingToNorth = false;
-            console.log('Camera animation to north complete');
         }
     }
 
@@ -1629,6 +1996,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         updateCameraAnimation();
 
         controls.update();
+        updateMidpointButtons();
         renderer.render(scene, camera);
         requestAnimationFrame(animate);
     }
@@ -1637,8 +2005,13 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     window.addEventListener('touchstart', () => autoRotate = false);
 
     window.addEventListener('click', (event) => {
+        if (lotEditState.suppressNextClick) {
+            lotEditState.suppressNextClick = false;
+            return;
+        }
+        if (lotEditState.active) return;
         if (window.isTapdotPopupOpen || isDetailsOpen) return;
-        if (event.target.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container')) return;
+        if (event.target.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container, .lot-editor-toggle-wrap, .lot-editor-panel, .lot-midpoint-plus')) return;
         const x = Math.floor(event.clientX);
         const y = Math.floor(event.clientY);
         if (x < 0 || x >= hiddenCanvas.width || y < 0 || y >= hiddenCanvas.height) return;
@@ -1662,7 +2035,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         });
 
         if (closestDot) {
-            console.log(`Tapped TapDot: ${closestDot.index}`);
             const cfg = closestDot.config;
             if (cfg.icon === 'info') {
                 if (visibleInfoLabelTapDot === closestDot) {
@@ -1739,7 +2111,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             if (visibleInfoLabelTapDot) {
                 visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
             }
-            console.log('No TapDot detected');
         }
     });
 
@@ -1762,6 +2133,14 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     const customScrollbar = document.getElementById('customScrollbar');
     const detailsInner = document.getElementById('detailsInner');
     const menuContainer = document.getElementById('menuContainer');
+    const lotEditorToggle = document.getElementById('lotEditorToggle');
+    const lotEditorPanel = document.getElementById('lotEditorPanel');
+    const lotEditorStatus = document.getElementById('lotEditorStatus');
+    const lotEditorVertexName = document.getElementById('lotEditorVertexName');
+    const lotVertexXInput = document.getElementById('lotVertexXInput');
+    const lotVertexYInput = document.getElementById('lotVertexYInput');
+    const lotVertexZInput = document.getElementById('lotVertexZInput');
+    const lotMidpointLayer = document.getElementById('lotMidpointLayer');
 
     let isDetailsOpen = false;
     let isDraggingThumb = false;
@@ -1775,6 +2154,424 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     let startCameraPosition = new Vector3();
     let targetCameraPosition = new Vector3();
     const animationDuration = 1500; // 1.5 seconds
+
+    function setLotEditorStatus(message) {
+        if (lotEditorStatus) lotEditorStatus.textContent = message;
+    }
+
+    function setLotEditorInputsEnabled(enabled) {
+        [lotVertexXInput, lotVertexYInput, lotVertexZInput].forEach((input) => {
+            if (!input) return;
+            input.disabled = !enabled;
+        });
+    }
+
+    function syncLotEditorInputsFromSelection() {
+        const selectedName = lotEditState.selectedVertexName;
+        const selectedMesh = selectedName ? borderDots[selectedName] : null;
+        if (!selectedMesh) {
+            lotEditorVertexName.textContent = 'Vertex: none selected';
+            lotVertexXInput.value = '';
+            lotVertexYInput.value = '';
+            lotVertexZInput.value = '';
+            setLotEditorInputsEnabled(false);
+            return;
+        }
+        lotEditorVertexName.textContent = `Vertex: ${selectedName}`;
+        lotVertexXInput.value = selectedMesh.position.x.toFixed(3);
+        lotVertexYInput.value = selectedMesh.position.y.toFixed(3);
+        lotVertexZInput.value = selectedMesh.position.z.toFixed(3);
+        setLotEditorInputsEnabled(true);
+    }
+
+    function selectBorderVertex(vertexName) {
+        if (!vertexName || !borderDots[vertexName]) {
+            lotEditState.selectedVertexName = null;
+            syncLotEditorInputsFromSelection();
+            refreshBorderVisualState();
+            return;
+        }
+        lotEditState.selectedVertexName = vertexName;
+        syncLotEditorInputsFromSelection();
+        refreshBorderVisualState();
+    }
+
+    function getLotEditorTopDownHeight() {
+        const dots = Object.values(borderDots);
+        if (!dots.length) return 2.4;
+        let minX = Infinity;
+        let maxX = -Infinity;
+        let minZ = Infinity;
+        let maxZ = -Infinity;
+        dots.forEach((dotMesh) => {
+            minX = Math.min(minX, dotMesh.position.x);
+            maxX = Math.max(maxX, dotMesh.position.x);
+            minZ = Math.min(minZ, dotMesh.position.z);
+            maxZ = Math.max(maxZ, dotMesh.position.z);
+        });
+        const span = Math.max(maxX - minX, maxZ - minZ, 1);
+        return Math.max(1.8, span * 2.2);
+    }
+
+    function alignCameraToLotEditorView() {
+        const target = controls.target.clone();
+        const northRadians = MathUtils.degToRad(parameters.compass.northDirection);
+        const northVector = new Vector3(Math.sin(northRadians), 0, Math.cos(northRadians)).normalize();
+        camera.position.set(target.x, target.y + getLotEditorTopDownHeight(), target.z + 0.0001);
+        camera.up.copy(northVector);
+        camera.lookAt(target);
+        controls.update();
+    }
+
+    function clearMidpointButtons() {
+        lotEditState.midpointButtons.forEach((button) => button.remove());
+        lotEditState.midpointButtons.clear();
+    }
+
+    function updateMidpointButtons() {
+        if (!lotEditState.active) {
+            clearMidpointButtons();
+            return;
+        }
+
+        const candidates = [];
+        borderLineConnections.forEach((connection) => {
+            const startDot = borderDots[connection.start];
+            const endDot = borderDots[connection.end];
+            if (!startDot || !endDot) return;
+            const startScreen = getScreenPositionFromWorld(startDot.position);
+            const endScreen = getScreenPositionFromWorld(endDot.position);
+            if (!startScreen.visible || !endScreen.visible) return;
+            const dx = endScreen.x - startScreen.x;
+            const dy = endScreen.y - startScreen.y;
+            const distance = Math.hypot(dx, dy);
+            if (distance < lotEditState.midpointMinScreenDistancePx) return;
+            candidates.push({
+                key: borderConnectionKey(connection.start, connection.end),
+                start: connection.start,
+                end: connection.end,
+                x: (startScreen.x + endScreen.x) * 0.5,
+                y: (startScreen.y + endScreen.y) * 0.5,
+                distance
+            });
+        });
+
+        candidates.sort((a, b) => b.distance - a.distance);
+        const selected = [];
+        for (const candidate of candidates) {
+            if (selected.length >= lotEditState.midpointMaxButtons) break;
+            const hasNearby = selected.some((placed) => {
+                const dx = placed.x - candidate.x;
+                const dy = placed.y - candidate.y;
+                return Math.hypot(dx, dy) < lotEditState.midpointMinSpacingPx;
+            });
+            if (!hasNearby) selected.push(candidate);
+        }
+
+        const activeKeys = new Set(selected.map((entry) => entry.key));
+        lotEditState.midpointButtons.forEach((button, key) => {
+            if (!activeKeys.has(key)) {
+                button.remove();
+                lotEditState.midpointButtons.delete(key);
+            }
+        });
+
+        selected.forEach((entry) => {
+            let button = lotEditState.midpointButtons.get(entry.key);
+            if (!button) {
+                button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'lot-midpoint-plus';
+                button.textContent = '+';
+                button.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    insertVertexAtConnection(button.dataset.start, button.dataset.end);
+                });
+                lotEditState.midpointButtons.set(entry.key, button);
+                lotMidpointLayer.appendChild(button);
+            }
+            button.dataset.start = entry.start;
+            button.dataset.end = entry.end;
+            button.style.left = `${entry.x}px`;
+            button.style.top = `${entry.y}px`;
+        });
+    }
+
+    function getConnectionCountForVertex(vertexName) {
+        return borderLineConnections.reduce((count, connection) => {
+            return count + ((connection.start === vertexName || connection.end === vertexName) ? 1 : 0);
+        }, 0);
+    }
+
+    function insertVertexAtConnection(startName, endName) {
+        const connectionIndex = getConnectionIndex(startName, endName);
+        if (connectionIndex < 0) return;
+        const connection = borderLineConnections[connectionIndex];
+        const startDot = borderDots[connection.start];
+        const endDot = borderDots[connection.end];
+        if (!startDot || !endDot) return;
+
+        const midpoint = new Vector3().addVectors(startDot.position, endDot.position).multiplyScalar(0.5);
+        const newVertexName = getNextBorderVertexName();
+        const createdDot = createBorderDot({
+            name: newVertexName,
+            position: { x: midpoint.x, y: midpoint.y, z: midpoint.z }
+        });
+        borderDots[newVertexName] = createdDot.mesh;
+
+        borderLineConnections.splice(
+            connectionIndex,
+            1,
+            { start: connection.start, end: newVertexName },
+            { start: newVertexName, end: connection.end }
+        );
+
+        rebuildBorderLines();
+        selectBorderVertex(newVertexName);
+        setLotEditorStatus(`Inserted ${newVertexName}. Drag to refine this segment.`);
+        updateMidpointButtons();
+    }
+
+    function getMergeTargetForDraggedVertex(draggedVertexName) {
+        const draggedDot = borderDots[draggedVertexName];
+        if (!draggedDot) return null;
+        const draggedScreen = getScreenPositionFromWorld(draggedDot.position);
+        if (!draggedScreen.visible) return null;
+
+        let closestName = null;
+        let closestDistance = Infinity;
+        Object.entries(borderDots).forEach(([candidateName, candidateDot]) => {
+            if (candidateName === draggedVertexName) return;
+            const candidateScreen = getScreenPositionFromWorld(candidateDot.position);
+            if (!candidateScreen.visible) return;
+            const distance = Math.hypot(candidateScreen.x - draggedScreen.x, candidateScreen.y - draggedScreen.y);
+            if (distance < lotEditState.mergeScreenDistancePx && distance < closestDistance) {
+                closestDistance = distance;
+                closestName = candidateName;
+            }
+        });
+        return closestName;
+    }
+
+    function mergeVertices(sourceVertexName, targetVertexName) {
+        if (!sourceVertexName || !targetVertexName || sourceVertexName === targetVertexName) return false;
+        if (!borderDots[sourceVertexName] || !borderDots[targetVertexName]) return false;
+
+        borderLineConnections = borderLineConnections.map((connection) => ({
+            start: connection.start === sourceVertexName ? targetVertexName : connection.start,
+            end: connection.end === sourceVertexName ? targetVertexName : connection.end
+        }));
+        dedupeBorderConnections();
+
+        const sourceDot = borderDots[sourceVertexName];
+        scene.remove(sourceDot);
+        sourceDot.geometry.dispose();
+        sourceDot.material.dispose();
+        delete borderDots[sourceVertexName];
+
+        rebuildBorderLines();
+        selectBorderVertex(targetVertexName);
+        setLotEditorStatus(`Merged ${sourceVertexName} into ${targetVertexName}.`);
+        updateMidpointButtons();
+        return true;
+    }
+
+    function endLotVertexDrag(clearOnly = false) {
+        if (!lotEditState.dragging.active && !clearOnly) return;
+        lotEditState.dragging.active = false;
+        lotEditState.dragging.pointerId = null;
+        lotEditState.dragging.vertexName = null;
+        lotEditState.dragging.mergeTargetName = null;
+        lotEditState.dragging.mergeHoverStartMs = 0;
+        if (lotEditState.dragging.mergeTimerId) {
+            clearTimeout(lotEditState.dragging.mergeTimerId);
+            lotEditState.dragging.mergeTimerId = null;
+        }
+        controls.enabled = true;
+        refreshBorderVisualState();
+        if (lotEditState.active) {
+            const selectedName = lotEditState.selectedVertexName;
+            if (selectedName && borderDots[selectedName]) {
+                setLotEditorStatus(`Selected ${selectedName} (${getConnectionCountForVertex(selectedName)} connections).`);
+            } else {
+                setLotEditorStatus('Drag vertices, use + to insert points, hold for 1.5s to merge.');
+            }
+        }
+    }
+
+    function beginLotVertexDrag(event) {
+        if (!lotEditState.active) return false;
+        if (event.button !== undefined && event.button !== 0) return false;
+        const hitVertex = getBorderVertexHit(event);
+        if (!hitVertex || !hitVertex.userData.borderVertexName) return false;
+
+        const vertexName = hitVertex.userData.borderVertexName;
+        selectBorderVertex(vertexName);
+        lotEditState.dragging.active = true;
+        lotEditState.dragging.pointerId = event.pointerId;
+        lotEditState.dragging.vertexName = vertexName;
+        lotEditState.dragging.planeY = hitVertex.position.y;
+        lotEditState.dragging.mergeTargetName = null;
+        lotEditState.dragging.mergeHoverStartMs = 0;
+        lotEditState.dragging.mergeTimerId = null;
+        lotEditState.suppressNextClick = true;
+        controls.enabled = false;
+        setLotEditorStatus(`Dragging ${vertexName}. Hold over another vertex for 1.5s to merge.`);
+        refreshBorderVisualState();
+        if (renderer.domElement.setPointerCapture) {
+            renderer.domElement.setPointerCapture(event.pointerId);
+        }
+        return true;
+    }
+
+    function updateLotVertexDrag(event) {
+        if (!lotEditState.dragging.active) return;
+        if (event.pointerId !== lotEditState.dragging.pointerId) return;
+
+        const vertexName = lotEditState.dragging.vertexName;
+        const vertexDot = borderDots[vertexName];
+        if (!vertexDot) {
+            endLotVertexDrag(true);
+            return;
+        }
+
+        const pointOnPlane = getPointerWorldOnPlane(event, lotEditState.dragging.planeY);
+        if (!pointOnPlane) return;
+        vertexDot.position.x = pointOnPlane.x;
+        vertexDot.position.y = lotEditState.dragging.planeY;
+        vertexDot.position.z = pointOnPlane.z;
+        rebuildBorderLines();
+        syncLotEditorInputsFromSelection();
+        updateMidpointButtons();
+
+        const mergeTargetName = getMergeTargetForDraggedVertex(vertexName);
+        if (mergeTargetName !== lotEditState.dragging.mergeTargetName) {
+            if (lotEditState.dragging.mergeTimerId) {
+                clearTimeout(lotEditState.dragging.mergeTimerId);
+                lotEditState.dragging.mergeTimerId = null;
+            }
+            lotEditState.dragging.mergeTargetName = mergeTargetName;
+            lotEditState.dragging.mergeHoverStartMs = mergeTargetName ? performance.now() : 0;
+            if (mergeTargetName) {
+                setLotEditorStatus(`Hold to merge ${vertexName} into ${mergeTargetName}...`);
+                const sourceVertex = vertexName;
+                const targetVertex = mergeTargetName;
+                lotEditState.dragging.mergeTimerId = setTimeout(() => {
+                    if (!lotEditState.dragging.active) return;
+                    if (lotEditState.dragging.vertexName !== sourceVertex) return;
+                    if (lotEditState.dragging.mergeTargetName !== targetVertex) return;
+                    const merged = mergeVertices(sourceVertex, targetVertex);
+                    endLotVertexDrag(true);
+                    if (merged) {
+                        setLotEditorStatus(`Merged ${sourceVertex} into ${targetVertex}.`);
+                    }
+                }, lotEditState.mergeHoldMs);
+            } else {
+                setLotEditorStatus(`Dragging ${vertexName}. Hold over another vertex for 1.5s to merge.`);
+            }
+            refreshBorderVisualState();
+            return;
+        }
+    }
+
+    function setLotEditMode(enabled) {
+        if (enabled === lotEditState.active) return;
+
+        lotEditState.active = enabled;
+        lotEditorToggle.classList.toggle('active', enabled);
+        lotEditorToggle.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+        lotEditorPanel.classList.toggle('active', enabled);
+
+        if (enabled) {
+            lotEditState.cameraSnapshot = {
+                position: camera.position.clone(),
+                target: controls.target.clone(),
+                up: camera.up.clone(),
+                controlsEnabled: controls.enabled,
+                controlsRotateEnabled: controls.enableRotate,
+                autoRotate
+            };
+            autoRotate = false;
+            isAnimatingToNorth = false;
+            controls.enableRotate = false;
+            alignCameraToLotEditorView();
+            if (!lotEditState.selectedVertexName || !borderDots[lotEditState.selectedVertexName]) {
+                selectBorderVertex(Object.keys(borderDots)[0] || null);
+            } else {
+                syncLotEditorInputsFromSelection();
+            }
+            setLotEditorStatus('Drag vertices, use + to insert points, hold for 1.5s to merge.');
+            refreshBorderVisualState();
+            updateMidpointButtons();
+            return;
+        }
+
+        clearMidpointButtons();
+        endLotVertexDrag(true);
+        const snapshot = lotEditState.cameraSnapshot;
+        if (snapshot) {
+            camera.position.copy(snapshot.position);
+            controls.target.copy(snapshot.target);
+            camera.up.copy(snapshot.up);
+            controls.enabled = snapshot.controlsEnabled;
+            controls.enableRotate = snapshot.controlsRotateEnabled;
+            autoRotate = snapshot.autoRotate;
+            controls.update();
+        } else {
+            controls.enableRotate = true;
+            controls.enabled = true;
+        }
+        setLotEditorStatus('Enable mode, then drag vertices to adjust boundaries.');
+        refreshBorderVisualState();
+    }
+
+    function updateSelectedVertexCoordinate(axis, value) {
+        const selectedName = lotEditState.selectedVertexName;
+        if (!selectedName || !borderDots[selectedName]) return;
+        if (!Number.isFinite(value)) return;
+        borderDots[selectedName].position[axis] = value;
+        if (axis === 'y') {
+            lotEditState.dragging.planeY = value;
+        }
+        rebuildBorderLines();
+        syncLotEditorInputsFromSelection();
+        setLotEditorStatus(`Updated ${selectedName} (${getConnectionCountForVertex(selectedName)} connections).`);
+        updateMidpointButtons();
+    }
+
+    renderer.domElement.addEventListener('pointerdown', (event) => {
+        if (!lotEditState.active) return;
+        const started = beginLotVertexDrag(event);
+        if (started) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }, { passive: false, capture: true });
+
+    window.addEventListener('pointermove', (event) => {
+        if (!lotEditState.dragging.active) return;
+        updateLotVertexDrag(event);
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('pointerup', (event) => {
+        if (!lotEditState.dragging.active) return;
+        if (event.pointerId !== lotEditState.dragging.pointerId) return;
+        endLotVertexDrag();
+        event.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener('pointercancel', () => endLotVertexDrag(true), { passive: true });
+
+    lotEditorToggle.addEventListener('click', () => {
+        setLotEditMode(!lotEditState.active);
+    });
+
+    lotVertexXInput.addEventListener('input', () => updateSelectedVertexCoordinate('x', parseFloat(lotVertexXInput.value)));
+    lotVertexYInput.addEventListener('input', () => updateSelectedVertexCoordinate('y', parseFloat(lotVertexYInput.value)));
+    lotVertexZInput.addEventListener('input', () => updateSelectedVertexCoordinate('z', parseFloat(lotVertexZInput.value)));
+    syncLotEditorInputsFromSelection();
 
     // Original base spacing and sizes:
     const baseMenuLeft = 20;
@@ -1930,7 +2727,11 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
 
     // Add click listener for compass button
     compassButton.addEventListener('mouseup', () => {
-        console.log('Compass clicked - animating to north');
+        if (lotEditState.active) {
+            alignCameraToLotEditorView();
+            setLotEditorStatus('Top-down north view reset.');
+            return;
+        }
         animateCameraToNorth();
     });
 
