@@ -2151,6 +2151,18 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (handled) suppressTapDotClickUntil = performance.now() + 700;
     }, { passive: true });
 
+    window.addEventListener('touchend', (event) => {
+        if ('PointerEvent' in window) return;
+        if (!event.changedTouches || !event.changedTouches.length) return;
+        const touch = event.changedTouches[0];
+        const handled = handleTapDotActivation({
+            clientX: touch.clientX,
+            clientY: touch.clientY,
+            target: event.target
+        });
+        if (handled) suppressTapDotClickUntil = performance.now() + 700;
+    }, { passive: true });
+
     // Start animation once icons are loaded
     // (If no icons, we simply call animate() immediately)
     if (iconsToLoad.length === 0) {
