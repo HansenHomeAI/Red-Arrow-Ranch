@@ -547,6 +547,28 @@
             border-radius: 0;
             margin: 0;
             background: #000;
+            position: relative;
+        }
+        .tapdot-photo-spinner {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-top-color: rgba(255, 255, 255, 0.85);
+            border-radius: 50%;
+            -webkit-animation: tapdot-spinner-spin 0.7s linear infinite;
+            animation: tapdot-spinner-spin 0.7s linear infinite;
+            z-index: 1;
+            display: none;
+        }
+        .tapdot-photo-spinner.visible {
+            display: block;
+        }
+        @-webkit-keyframes tapdot-spinner-spin {
+            to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+        }
+        @keyframes tapdot-spinner-spin {
+            to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
         }
         .tapdot-popup .tapdot-photo {
             max-width: 100%;
@@ -1011,6 +1033,7 @@
         </button>
         <div class="tapdot-popup-content">
             <div class="tapdot-photo-wrap">
+                <div id="tapdotPhotoSpinner" class="tapdot-photo-spinner" aria-hidden="true"></div>
                 <img id="tapdotPopupPhoto" class="tapdot-photo" src="" alt="">
             </div>
             <div id="tapdotCarouselNav" class="tapdot-carousel-nav hidden">
@@ -2605,7 +2628,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                     dotsContainer.innerHTML = '';
                 }
                 const firstSrc = photos[0] || '';
-                photoEl.src = firstSrc;
+                const spinnerEl = document.getElementById('tapdotPhotoSpinner');
                 popup.style.width = '';
                 popup.style.height = '';
                 document.getElementById('overlay-ui').classList.add('active');
@@ -2614,8 +2637,17 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                     popup.classList.add('show');
                 };
                 if (firstSrc) {
+                    popup.style.width = 'min(90vw, 800px)';
+                    popup.style.height = 'min(85vh, 600px)';
+                    requestAnimationFrame(() => requestAnimationFrame(showPopup));
+                    if (spinnerEl) spinnerEl.classList.add('visible');
+                    photoEl.src = '';
                     const img = new Image();
+                    const hideSpinner = () => {
+                        if (spinnerEl) spinnerEl.classList.remove('visible');
+                    };
                     img.onload = () => {
+                        hideSpinner();
                         const maxW = window.innerWidth - 48;
                         const maxH = window.innerHeight - 80;
                         let w = img.naturalWidth;
@@ -2627,11 +2659,14 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                         }
                         popup.style.width = w + 'px';
                         popup.style.height = h + 'px';
-                        requestAnimationFrame(() => requestAnimationFrame(showPopup));
+                        photoEl.src = firstSrc;
                     };
+                    img.onerror = hideSpinner;
                     img.src = firstSrc;
                     if (img.complete) img.onload();
                 } else {
+                    if (spinnerEl) spinnerEl.classList.remove('visible');
+                    photoEl.src = '';
                     popup.style.width = 'min(90vw, 800px)';
                     popup.style.height = 'min(85vh, 600px)';
                     requestAnimationFrame(() => requestAnimationFrame(showPopup));
@@ -3125,6 +3160,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         window.isTapdotPopupOpen = false;
         tapdotPopup.classList.remove('show');
         if (!isDetailsOpen) overlayUI.classList.remove('active');
+        const spinner = document.getElementById('tapdotPhotoSpinner');
+        if (spinner) spinner.classList.remove('visible');
         setTimeout(() => {
             tapdotPopup.style.width = '';
             tapdotPopup.style.height = '';
@@ -3136,16 +3173,23 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (!photos || photos.length < 2 || idx < 0 || idx >= photos.length) return;
         window.tapdotCarouselIndex = idx;
         const photoEl = document.getElementById('tapdotPopupPhoto');
+        const spinnerEl = document.getElementById('tapdotPhotoSpinner');
         const dots = document.querySelectorAll('.tapdot-carousel-dot');
         dots.forEach((d, i) => d.classList.toggle('active', i === idx));
         if (photoEl) {
             photoEl.classList.add('fade');
             const newSrc = photos[idx];
+            if (spinnerEl) spinnerEl.classList.add('visible');
             const img = new Image();
+            const hideSpinner = () => {
+                if (spinnerEl) spinnerEl.classList.remove('visible');
+            };
             img.onload = () => {
+                hideSpinner();
                 photoEl.src = newSrc;
                 requestAnimationFrame(() => { photoEl.classList.remove('fade'); });
             };
+            img.onerror = hideSpinner;
             img.src = newSrc;
             if (img.complete) img.onload();
         }
