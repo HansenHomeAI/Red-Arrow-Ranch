@@ -886,6 +886,26 @@
             opacity: 0.45;
             cursor: not-allowed;
         }
+        .lot-editor-actions {
+            margin-top: 11px;
+            display: flex;
+            gap: 8px;
+        }
+        .lot-editor-action-btn {
+            flex: 1;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.34);
+            color: #fff;
+            font: 500 12px/1 'Helvetica Neue', Arial, sans-serif;
+            padding: 9px 8px;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .lot-editor-action-btn:hover {
+            border-color: rgba(255, 255, 255, 0.38);
+            background: rgba(191, 40, 27, 0.38);
+        }
         .lot-midpoint-layer {
             position: absolute;
             inset: 0;
@@ -976,6 +996,9 @@
                 <label for="lotVertexZInput">Z</label>
                 <input id="lotVertexZInput" type="number" step="0.001" disabled>
             </div>
+        </div>
+        <div class="lot-editor-actions">
+            <button id="lotCopyJsonButton" type="button" class="lot-editor-action-btn">Copy Lot JSON</button>
         </div>
     </div>
     <div id="lotMidpointLayer" class="lot-midpoint-layer"></div>
@@ -1135,23 +1158,23 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     const borderDotPositions = [
         // Outer boundary - clockwise from NW (irregular shape, broad north, narrow south, W indentation)
         // Rotated 90° clockwise from bird's eye view (x'=z, z'=-x)
-        { name: 'Lot_V1', position: { x: 0.48, y: 0.1, z: 0.02 } },
+        { name: 'Lot_V1', position: { x: 0.493614, y: 0.1, z: 0.480827 } },
         { name: 'Lot_V2', position: { x: 0.55, y: 0.1, z: -0.12 } },
         { name: 'Lot_V3', position: { x: 0.58, y: 0.1, z: -0.35 } },
         { name: 'Lot_V4', position: { x: 0.56, y: 0.1, z: -0.58 } },
-        { name: 'Lot_V5', position: { x: 0.50, y: 0.1, z: -0.82 } },
+        { name: 'Lot_V5', position: { x: 0.5, y: 0.1, z: -0.82 } },
         { name: 'Lot_V6', position: { x: 0.38, y: 0.1, z: -1.02 } },
         { name: 'Lot_V7', position: { x: 0.15, y: 0.1, z: -1.08 } },
         { name: 'Lot_V8', position: { x: -0.15, y: 0.1, z: -1.02 } },
         { name: 'Lot_V9', position: { x: -0.42, y: 0.1, z: -0.88 } },
         { name: 'Lot_V10', position: { x: -0.52, y: 0.1, z: -0.55 } },
         { name: 'Lot_V11', position: { x: -0.45, y: 0.1, z: -0.25 } },
-        { name: 'Lot_V12', position: { x: -0.30, y: 0.1, z: -0.02 } },
-        { name: 'Lot_V13', position: { x: 0.05, y: 0.1, z: 0.05 } },
+        { name: 'Lot_V12', position: { x: -0.804093, y: 0.1, z: 0.059176 } },
+        { name: 'Lot_V13', position: { x: -0.438111, y: 0.1, z: 0.427759 } },
         { name: 'Lot_V14', position: { x: 0.28, y: 0.1, z: 0.02 } },
         // Internal parcel divisions - junction and boundary intersection points (north center cluster)
-        { name: 'Lot_V15', position: { x: 0.35, y: 0.1, z: -0.50 } },  // Junction: N-S and E-W divisions meet
-        { name: 'Lot_V16', position: { x: 0.20, y: 0.1, z: 0.02 } },   // E-W line west end
+        { name: 'Lot_V15', position: { x: 0.35, y: 0.1, z: -0.5 } },  // Junction: N-S and E-W divisions meet
+        { name: 'Lot_V16', position: { x: 0.048155, y: 0.1, z: 0.610217 } },   // E-W line west end
         { name: 'Lot_V17', position: { x: 0.28, y: 0.1, z: -0.98 } },  // E-W line east end
         { name: 'Lot_V18', position: { x: 0.55, y: 0.1, z: -0.52 } },  // N-S line north end (divides NW/NE parcels)
     ];
@@ -2140,6 +2163,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     const lotVertexXInput = document.getElementById('lotVertexXInput');
     const lotVertexYInput = document.getElementById('lotVertexYInput');
     const lotVertexZInput = document.getElementById('lotVertexZInput');
+    const lotCopyJsonButton = document.getElementById('lotCopyJsonButton');
     const lotMidpointLayer = document.getElementById('lotMidpointLayer');
 
     let isDetailsOpen = false;
@@ -2302,6 +2326,69 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         return borderLineConnections.reduce((count, connection) => {
             return count + ((connection.start === vertexName || connection.end === vertexName) ? 1 : 0);
         }, 0);
+    }
+
+    function getSerializedBorderDotPositions() {
+        return Object.entries(borderDots)
+            .map(([name, dotMesh]) => ({
+                name,
+                position: {
+                    x: +dotMesh.position.x.toFixed(6),
+                    y: +dotMesh.position.y.toFixed(6),
+                    z: +dotMesh.position.z.toFixed(6)
+                }
+            }))
+            .sort((a, b) => {
+                const aIndex = parseInt(String(a.name).replace('Lot_V', ''), 10);
+                const bIndex = parseInt(String(b.name).replace('Lot_V', ''), 10);
+                const safeA = Number.isFinite(aIndex) ? aIndex : Number.MAX_SAFE_INTEGER;
+                const safeB = Number.isFinite(bIndex) ? bIndex : Number.MAX_SAFE_INTEGER;
+                if (safeA !== safeB) return safeA - safeB;
+                return String(a.name).localeCompare(String(b.name));
+            });
+    }
+
+    function getSerializedBorderLineConnections() {
+        dedupeBorderConnections();
+        return borderLineConnections
+            .filter((connection) => borderDots[connection.start] && borderDots[connection.end] && connection.start !== connection.end)
+            .map((connection) => ({ start: connection.start, end: connection.end }));
+    }
+
+    function buildLotGeometryPayload() {
+        return {
+            borderDotPositions: getSerializedBorderDotPositions(),
+            borderLineConnections: getSerializedBorderLineConnections(),
+            metadata: {
+                northDirection: parameters.compass.northDirection
+            }
+        };
+    }
+
+    async function copyTextToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+            return true;
+        }
+
+        const tempTextarea = document.createElement('textarea');
+        tempTextarea.value = text;
+        tempTextarea.setAttribute('readonly', '');
+        tempTextarea.style.position = 'fixed';
+        tempTextarea.style.opacity = '0';
+        tempTextarea.style.pointerEvents = 'none';
+        document.body.appendChild(tempTextarea);
+        tempTextarea.focus();
+        tempTextarea.select();
+
+        let copied = false;
+        try {
+            copied = document.execCommand('copy');
+        } catch (error) {
+            copied = false;
+        }
+        document.body.removeChild(tempTextarea);
+        return copied;
     }
 
     function insertVertexAtConnection(startName, endName) {
@@ -2571,6 +2658,29 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     lotVertexXInput.addEventListener('input', () => updateSelectedVertexCoordinate('x', parseFloat(lotVertexXInput.value)));
     lotVertexYInput.addEventListener('input', () => updateSelectedVertexCoordinate('y', parseFloat(lotVertexYInput.value)));
     lotVertexZInput.addEventListener('input', () => updateSelectedVertexCoordinate('z', parseFloat(lotVertexZInput.value)));
+    lotCopyJsonButton.addEventListener('click', async () => {
+        const payload = buildLotGeometryPayload();
+        const jsonText = JSON.stringify(payload, null, 2);
+        lotEditState.lastExportJson = jsonText;
+        window.__lotExportJson = jsonText;
+        window.__lotExportPayload = payload;
+        try {
+            const copied = await copyTextToClipboard(jsonText);
+            if (copied) {
+                setLotEditorStatus(`Copied ${payload.borderDotPositions.length} vertices and ${payload.borderLineConnections.length} connections.`);
+                return;
+            }
+        } catch (error) {
+            // Fall through to prompt fallback.
+        }
+
+        try {
+            window.prompt('Copy your lot JSON', jsonText);
+            setLotEditorStatus(`JSON ready (${payload.borderDotPositions.length} vertices, ${payload.borderLineConnections.length} connections).`);
+        } catch (error) {
+            setLotEditorStatus('Unable to copy automatically. Clipboard blocked.');
+        }
+    });
     syncLotEditorInputsFromSelection();
 
     // Original base spacing and sizes:
