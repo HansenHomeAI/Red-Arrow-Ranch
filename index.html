@@ -488,21 +488,21 @@
             opacity: 1;
         }
 
-        /* TapDot popup – black background, full photo visible (contain), caption at bottom */
+        /* TapDot popup – centered, dimensions based on first photo, caption at bottom */
         .tapdot-popup {
-            position: absolute;
+            position: fixed;
             z-index: 9;
-            top: 60px;
-            left: 20px;
-            right: 20px;
-            bottom: 60px;
+            left: 50%;
+            top: 50%;
+            -webkit-transform: translate(-50%, -50%) scale(0.95);
+            transform: translate(-50%, -50%) scale(0.95);
+            max-width: calc(100vw - 80px);
+            max-height: calc(100vh - 120px);
             border-radius: 30px;
             background: #000;
             display: flex;
             flex-direction: column;
             opacity: 0;
-            -webkit-transform: scale(0.95);
-            transform: scale(0.95);
             pointer-events: none;
             -webkit-transition: opacity 0.3s ease, -webkit-transform 0.3s ease;
             transition: opacity 0.3s ease, transform 0.3s ease;
@@ -523,8 +523,8 @@
         }
         .tapdot-popup.show {
             opacity: 1;
-            -webkit-transform: scale(1);
-            transform: scale(1);
+            -webkit-transform: translate(-50%, -50%) scale(1);
+            transform: translate(-50%, -50%) scale(1);
             pointer-events: auto;
         }
         /* Photo area: no scroll; image contained so full photo always visible, black letterboxing */
@@ -645,7 +645,7 @@
         .tapdot-popup .tapdot-caption-wrap {
             position: relative;
             z-index: 1;
-            padding: 0 30px 52px;
+            padding: 0 28px 56px;
         }
         .tapdot-popup .tapdot-caption {
             font-size: 17px;
@@ -653,7 +653,7 @@
             line-height: 1.5;
             letter-spacing: 0.2px;
             color: rgba(255, 255, 255, 0.95);
-            margin: 0 0 12px;
+            margin: 0 0 8px;
             font-family: 'Helvetica Neue', Arial, sans-serif;
         }
         .tapdot-popup .tapdot-carousel-dots-wrap {
@@ -1649,7 +1649,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 const captionEl = document.getElementById('tapdotPopupCaption');
                 const photos = cfg.photos || (cfg.photo ? [cfg.photo] : []);
                 if (popup && photoEl && captionEl) {
-                    photoEl.src = photos[0] || '';
                     photoEl.alt = cfg.caption || '';
                     captionEl.textContent = cfg.caption || '';
                     window.tapdotCarouselPhotos = photos;
@@ -1670,6 +1669,30 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                         carouselNav.classList.add('hidden');
                         carouselNav.classList.remove('visible');
                         dotsContainer.innerHTML = '';
+                    }
+                    const firstSrc = photos[0] || '';
+                    photoEl.src = firstSrc;
+                    popup.style.width = '';
+                    popup.style.height = '';
+                    if (firstSrc) {
+                        const img = new Image();
+                        img.onload = () => {
+                            const maxW = window.innerWidth - 80;
+                            const maxH = window.innerHeight - 120;
+                            let w = img.naturalWidth;
+                            let h = img.naturalHeight;
+                            if (w > maxW || h > maxH) {
+                                const r = Math.min(maxW / w, maxH / h);
+                                w = Math.round(w * r);
+                                h = Math.round(h * r);
+                            }
+                            popup.style.width = w + 'px';
+                            popup.style.height = h + 'px';
+                        };
+                        img.src = firstSrc;
+                    } else {
+                        popup.style.width = 'min(80vw, 800px)';
+                        popup.style.height = 'min(80vh, 600px)';
                     }
                     popup.classList.add('show');
                     document.getElementById('overlay-ui').classList.add('active');
@@ -1914,6 +1937,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (!tapdotPopup) return;
         window.isTapdotPopupOpen = false;
         tapdotPopup.classList.remove('show');
+        tapdotPopup.style.width = '';
+        tapdotPopup.style.height = '';
         if (!isDetailsOpen) overlayUI.classList.remove('active');
     }
 
