@@ -2890,9 +2890,11 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         endLotVertexDrag(true);
     }, { passive: true });
 
-    lotEditorToggle.addEventListener('click', () => {
-        setLotEditMode(!lotEditState.active);
-    });
+    if (lotEditorToggle) {
+        lotEditorToggle.addEventListener('click', () => {
+            setLotEditMode(!lotEditState.active);
+        });
+    }
 
     lotVertexXInput.addEventListener('input', () => updateSelectedCoordinate('x', parseFloat(lotVertexXInput.value)));
     lotVertexYInput.addEventListener('input', () => updateSelectedCoordinate('y', parseFloat(lotVertexYInput.value)));
