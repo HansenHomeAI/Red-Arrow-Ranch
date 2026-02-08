@@ -2089,19 +2089,21 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     window.addEventListener('touchstart', () => autoRotate = false);
 
     let lastPointerDownForTapDot = { x: 0, y: 0 };
+    let suppressTapDotClickUntil = 0;
     const tapDotClickMoveThreshold = 10;
     window.addEventListener('pointerdown', (event) => {
         lastPointerDownForTapDot = { x: event.clientX, y: event.clientY };
     }, { passive: true });
 
-    window.addEventListener('click', (event) => {
+    function handleTapDotActivation(event) {
         if (lotEditState.suppressNextClick) {
             lotEditState.suppressNextClick = false;
-            return;
+            return true;
         }
         if (lotEditState.active) return;
         if (window.isTapdotPopupOpen || isDetailsOpen) return;
-        if (event.target.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container, .lot-editor-toggle-wrap, .lot-editor-panel, .lot-midpoint-plus')) return;
+        const eventTarget = event.target;
+        if (eventTarget && eventTarget.closest && eventTarget.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container, .lot-editor-toggle-wrap, .lot-editor-panel, .lot-midpoint-plus')) return;
         const dx = event.clientX - lastPointerDownForTapDot.x;
         const dy = event.clientY - lastPointerDownForTapDot.y;
         if (Math.sqrt(dx * dx + dy * dy) > tapDotClickMoveThreshold) return;
@@ -2134,7 +2136,20 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 visibleInfoLabelTapDot.infoLabelTargetOpacity = 0;
             }
         }
+        return true;
+    }
+
+    window.addEventListener('click', (event) => {
+        if (performance.now() < suppressTapDotClickUntil) return;
+        handleTapDotActivation(event);
     });
+
+    window.addEventListener('pointerup', (event) => {
+        if (!event.isPrimary) return;
+        if (event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+        const handled = handleTapDotActivation(event);
+        if (handled) suppressTapDotClickUntil = performance.now() + 700;
+    }, { passive: true });
 
     // Start animation once icons are loaded
     // (If no icons, we simply call animate() immediately)
@@ -3104,7 +3119,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         overlayUI.classList.remove('active');
     }
 
-    detailsButton.addEventListener('mouseup', () => {
+    detailsButton.addEventListener('click', () => {
         const img = detailsButton.querySelector('img');
         if (isDetailsOpen) {
             animateIconChange(img, 'https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/DetailsIconDefault.svg');
@@ -3116,11 +3131,11 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     });
 
     // Add click listener for compass button
-    compassButton.addEventListener('mouseup', () => {
+    compassButton.addEventListener('click', () => {
         animateCameraToNorth();
     });
 
-    fullscreenButton.addEventListener('mouseup', async () => {
+    fullscreenButton.addEventListener('click', async () => {
         const img = fullscreenButton.querySelector('img');
         let newSrc;
         if (document.fullscreenElement) {
@@ -3203,7 +3218,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     }
 
     if (tapdotPopupClose) {
-        tapdotPopupClose.addEventListener('mouseup', () => closeTapdotPopup());
+        tapdotPopupClose.addEventListener('click', () => closeTapdotPopup());
     }
     const tapdotCarouselPrev = document.getElementById('tapdotCarouselPrev');
     const tapdotCarouselNext = document.getElementById('tapdotCarouselNext');
