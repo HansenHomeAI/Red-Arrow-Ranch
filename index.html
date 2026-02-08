@@ -2141,6 +2141,25 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     const lotVertexZInput = document.getElementById('lotVertexZInput');
     const lotCopyJsonButton = document.getElementById('lotCopyJsonButton');
     const lotMidpointLayer = document.getElementById('lotMidpointLayer');
+    const tapDotGithubRawBase = 'https://raw.githubusercontent.com/HansenHomeAI/Red-Arrow-Ranch/main/3D%20Model%20Folders';
+
+    function resolveTapDotPhotoUrl(photoSrc) {
+        if (!photoSrc) return '';
+        if (/^(?:[a-z]+:)?\/\//i.test(photoSrc) || photoSrc.startsWith('data:') || photoSrc.startsWith('blob:')) {
+            return photoSrc;
+        }
+        const normalized = String(photoSrc).replace(/\\/g, '/').replace(/^\.?\//, '');
+        if (normalized.startsWith('3D Model Folders/')) {
+            const relativePath = normalized.slice('3D Model Folders/'.length);
+            const encodedPath = relativePath.split('/').map((segment) => encodeURIComponent(segment)).join('/');
+            return `${tapDotGithubRawBase}/${encodedPath}`;
+        }
+        try {
+            return new URL(normalized, window.location.href).href;
+        } catch (error) {
+            return normalized;
+        }
+    }
 
     let isDetailsOpen = false;
     let isDraggingThumb = false;
@@ -2167,6 +2186,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     }
 
     function syncLotEditorInputsFromSelection() {
+        if (!lotEditorVertexName || !lotVertexXInput || !lotVertexYInput || !lotVertexZInput) return;
         const selectedName = lotEditState.selectedVertexName;
         const selectedTapDot = lotEditState.selectedTapDot;
         if (selectedTapDot) {
@@ -2562,7 +2582,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             const popup = document.getElementById('tapdotPopup');
             const photoEl = document.getElementById('tapdotPopupPhoto');
             const captionEl = document.getElementById('tapdotPopupCaption');
-            const photos = cfg.photos || (cfg.photo ? [cfg.photo] : []);
+            const photos = (cfg.photos || (cfg.photo ? [cfg.photo] : [])).map(resolveTapDotPhotoUrl);
             if (popup && photoEl && captionEl) {
                 photoEl.alt = cfg.caption || '';
                 captionEl.textContent = cfg.caption || '';
@@ -2570,7 +2590,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 window.tapdotCarouselIndex = 0;
                 const carouselNav = document.getElementById('tapdotCarouselNav');
                 const dotsContainer = document.getElementById('tapdotCarouselDots');
-                if (photos.length > 1) {
+                if (photos.length > 1 && carouselNav && dotsContainer) {
                     carouselNav.classList.remove('hidden');
                     carouselNav.classList.add('visible');
                     dotsContainer.innerHTML = '';
@@ -2580,7 +2600,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                         dot.setAttribute('data-index', i);
                         dotsContainer.appendChild(dot);
                     }
-                } else {
+                } else if (carouselNav && dotsContainer) {
                     carouselNav.classList.add('hidden');
                     carouselNav.classList.remove('visible');
                     dotsContainer.innerHTML = '';
@@ -2608,6 +2628,11 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                         }
                         popup.style.width = w + 'px';
                         popup.style.height = h + 'px';
+                        requestAnimationFrame(() => requestAnimationFrame(showPopup));
+                    };
+                    img.onerror = () => {
+                        popup.style.width = 'min(90vw, 800px)';
+                        popup.style.height = 'min(85vh, 600px)';
                         requestAnimationFrame(() => requestAnimationFrame(showPopup));
                     };
                     img.src = firstSrc;
@@ -2743,6 +2768,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     }
 
     function setLotEditMode(enabled) {
+        if (!lotEditorToggle || !lotEditorPanel) return;
         if (enabled === lotEditState.active) return;
 
         lotEditState.active = enabled;
@@ -2871,40 +2897,50 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         endLotVertexDrag(true);
     }, { passive: true });
 
-    lotEditorToggle.addEventListener('click', () => {
-        setLotEditMode(!lotEditState.active);
-    });
+    if (lotEditorToggle) {
+        lotEditorToggle.addEventListener('click', () => {
+            setLotEditMode(!lotEditState.active);
+        });
+    }
 
-    lotVertexXInput.addEventListener('input', () => updateSelectedCoordinate('x', parseFloat(lotVertexXInput.value)));
-    lotVertexYInput.addEventListener('input', () => updateSelectedCoordinate('y', parseFloat(lotVertexYInput.value)));
-    lotVertexZInput.addEventListener('input', () => updateSelectedCoordinate('z', parseFloat(lotVertexZInput.value)));
-    lotCopyJsonButton.addEventListener('click', async () => {
-        const payload = buildLotGeometryPayload();
-        const jsonText = JSON.stringify(payload, null, 2);
-        lotEditState.lastExportJson = jsonText;
-        window.__lotExportJson = jsonText;
-        window.__lotExportPayload = payload;
-        try {
-            const copied = await copyTextToClipboard(jsonText);
-            if (copied) {
-                const parts = [`${payload.borderDotPositions.length} vertices`, `${payload.borderLineConnections.length} connections`];
-                if (payload.tapDotPositions && payload.tapDotPositions.length) {
-                    parts.push(`${payload.tapDotPositions.length} tap dots`);
+    if (lotVertexXInput) {
+        lotVertexXInput.addEventListener('input', () => updateSelectedCoordinate('x', parseFloat(lotVertexXInput.value)));
+    }
+    if (lotVertexYInput) {
+        lotVertexYInput.addEventListener('input', () => updateSelectedCoordinate('y', parseFloat(lotVertexYInput.value)));
+    }
+    if (lotVertexZInput) {
+        lotVertexZInput.addEventListener('input', () => updateSelectedCoordinate('z', parseFloat(lotVertexZInput.value)));
+    }
+    if (lotCopyJsonButton) {
+        lotCopyJsonButton.addEventListener('click', async () => {
+            const payload = buildLotGeometryPayload();
+            const jsonText = JSON.stringify(payload, null, 2);
+            lotEditState.lastExportJson = jsonText;
+            window.__lotExportJson = jsonText;
+            window.__lotExportPayload = payload;
+            try {
+                const copied = await copyTextToClipboard(jsonText);
+                if (copied) {
+                    const parts = [`${payload.borderDotPositions.length} vertices`, `${payload.borderLineConnections.length} connections`];
+                    if (payload.tapDotPositions && payload.tapDotPositions.length) {
+                        parts.push(`${payload.tapDotPositions.length} tap dots`);
+                    }
+                    setLotEditorStatus(`Copied ${parts.join(', ')}.`);
+                    return;
                 }
-                setLotEditorStatus(`Copied ${parts.join(', ')}.`);
-                return;
+            } catch (error) {
+                // Fall through to prompt fallback.
             }
-        } catch (error) {
-            // Fall through to prompt fallback.
-        }
 
-        try {
-            window.prompt('Copy your lot JSON', jsonText);
-            setLotEditorStatus(`JSON ready (${payload.borderDotPositions.length} vertices, ${payload.borderLineConnections.length} connections).`);
-        } catch (error) {
-            setLotEditorStatus('Unable to copy automatically. Clipboard blocked.');
-        }
-    });
+            try {
+                window.prompt('Copy your lot JSON', jsonText);
+                setLotEditorStatus(`JSON ready (${payload.borderDotPositions.length} vertices, ${payload.borderLineConnections.length} connections).`);
+            } catch (error) {
+                setLotEditorStatus('Unable to copy automatically. Clipboard blocked.');
+            }
+        });
+    }
     syncLotEditorInputsFromSelection();
 
     // Original base spacing and sizes:
@@ -3122,6 +3158,10 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             const newSrc = photos[idx];
             const img = new Image();
             img.onload = () => {
+                photoEl.src = newSrc;
+                requestAnimationFrame(() => { photoEl.classList.remove('fade'); });
+            };
+            img.onerror = () => {
                 photoEl.src = newSrc;
                 requestAnimationFrame(() => { photoEl.classList.remove('fade'); });
             };
