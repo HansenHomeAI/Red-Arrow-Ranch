@@ -561,26 +561,30 @@
         .tapdot-popup .tapdot-photo.fade {
             opacity: 0;
         }
-        /* Carousel nav: arrows + dots at base of image, no container */
+        /* Carousel arrows: left/right edges of image, vertically centered */
         .tapdot-carousel-nav {
             position: absolute;
-            bottom: 24px;
-            left: 50%;
-            -webkit-transform: translateX(-50%);
-            transform: translateX(-50%);
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             align-items: center;
-            gap: 20px;
+            justify-content: space-between;
+            padding: 0 16px;
             z-index: 2;
             pointer-events: none;
         }
         .tapdot-carousel-nav.visible {
+            pointer-events: none;
+        }
+        .tapdot-carousel-nav.visible .tapdot-carousel-arrow {
             pointer-events: auto;
         }
         .tapdot-carousel-nav.hidden { display: none !important; }
         .tapdot-carousel-arrow {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -591,23 +595,24 @@
         }
         .tapdot-carousel-arrow:hover { opacity: 0.8; }
         .tapdot-carousel-arrow svg {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             stroke-width: 2;
         }
+        /* Dots: underneath caption, left-aligned with caption */
         .tapdot-carousel-dots {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
         .tapdot-carousel-dot {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.4);
             cursor: pointer;
-            -webkit-transition: background 0.3s ease, transform 0.2s ease;
-            transition: background 0.3s ease, transform 0.2s ease;
+            -webkit-transition: background 0.3s ease;
+            transition: background 0.3s ease;
         }
         .tapdot-carousel-dot:hover {
             background: rgba(255, 255, 255, 0.7);
@@ -615,7 +620,7 @@
         .tapdot-carousel-dot.active {
             background: white;
         }
-        /* Caption overlay: fixed at bottom of popup, gradient + text always visible */
+        /* Caption overlay: fixed at bottom of popup, gradient + text + dots */
         .tapdot-popup .tapdot-caption-overlay {
             position: absolute;
             bottom: 0;
@@ -628,23 +633,33 @@
             justify-content: flex-end;
             pointer-events: none;
         }
+        .tapdot-popup .tapdot-caption-overlay .tapdot-caption-wrap {
+            pointer-events: auto;
+        }
         .tapdot-popup .tapdot-caption-gradient {
             position: absolute;
             inset: 0;
             background: linear-gradient(to top, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.5) 28%, rgba(0,0,0,0.12) 55%, transparent 100%);
             z-index: 0;
         }
-        .tapdot-popup .tapdot-caption {
+        .tapdot-popup .tapdot-caption-wrap {
             position: relative;
             z-index: 1;
+            padding: 0 30px 52px;
+        }
+        .tapdot-popup .tapdot-caption {
             font-size: 17px;
             font-weight: 400;
             line-height: 1.5;
             letter-spacing: 0.2px;
             color: rgba(255, 255, 255, 0.95);
-            margin: 0;
-            padding: 0 30px 52px;
+            margin: 0 0 12px;
             font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        .tapdot-popup .tapdot-carousel-dots-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .tapdot-popup-content { position: relative; }
         .tapdot-popup-close {
@@ -751,7 +766,6 @@
                 <div id="tapdotCarouselPrev" class="tapdot-carousel-arrow" aria-label="Previous photo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
                 </div>
-                <div id="tapdotCarouselDots" class="tapdot-carousel-dots"></div>
                 <div id="tapdotCarouselNext" class="tapdot-carousel-arrow" aria-label="Next photo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
                 </div>
@@ -759,7 +773,10 @@
         </div>
         <div class="tapdot-caption-overlay">
             <div class="tapdot-caption-gradient" aria-hidden="true"></div>
-            <p id="tapdotPopupCaption" class="tapdot-caption"></p>
+            <div class="tapdot-caption-wrap">
+                <p id="tapdotPopupCaption" class="tapdot-caption"></p>
+                <div id="tapdotCarouselDots" class="tapdot-carousel-dots-wrap"></div>
+            </div>
         </div>
     </div>
 
@@ -1176,22 +1193,22 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             const text = config.caption;
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
-            canvas.width = 3072;
-            canvas.height = 512;
+            canvas.width = 2560;
+            canvas.height = 426;
             context.fillStyle = 'rgba(255, 255, 255, 0)';
             context.fillRect(0, 0, canvas.width, canvas.height);
-            context.font = '520 200px "Helvetica Neue", Helvetica, Arial, sans-serif';
+            context.font = '520 160px "Helvetica Neue", Helvetica, Arial, sans-serif';
             context.textAlign = 'center';
             context.textBaseline = 'middle';
             context.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-            context.lineWidth = 5;
+            context.lineWidth = 4;
             context.fillStyle = 'white';
             context.fillText(text, canvas.width / 2, canvas.height / 2);
             context.strokeText(text, canvas.width / 2, canvas.height / 2);
 
             const texture = new Texture(canvas);
             texture.needsUpdate = true;
-            const geometry = new PlaneGeometry(2.4, 0.4);
+            const geometry = new PlaneGeometry(2.0, 0.33);
             const material = new MeshStandardMaterial({
                 map: texture,
                 transparent: true,
@@ -1204,8 +1221,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             });
             infoTextPlane = new Mesh(geometry, material);
             infoTextPlane.visible = false;
-            infoTextPlane.scale.setScalar(0.6); // fixed larger scale so label is readable and clear of icon
-            infoTextPlane.geometry.translate(0, 0.32, 0); // offset well above icon to avoid overlap
+            infoTextPlane.scale.setScalar(0.5);
+            infoTextPlane.geometry.translate(0, 0.22, 0); // offset above icon
             scene.add(infoTextPlane);
         }
 
