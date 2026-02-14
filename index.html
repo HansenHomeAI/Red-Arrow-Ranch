@@ -38,18 +38,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: auto;
+            pointer-events: none;
             z-index: 5;
         }
         .tapdot-label-bubble {
             position: absolute;
             transform: translate(-50%, -100%);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 6px 12px 10px;
-            width: max-content;
-            cursor: pointer;
+            padding: 6px 14px 10px;
             font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: 13px;
             font-weight: 500;
@@ -57,21 +55,25 @@
             white-space: nowrap;
             box-sizing: border-box;
             opacity: 0;
+            width: max-content;
+            min-width: 0;
+            border-radius: 9999px;
             background: rgba(255, 255, 255, 0.25);
             -webkit-backdrop-filter: blur(20px);
             backdrop-filter: blur(20px);
-            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 46'%3E%3Cpath d='M 12 0 L 128 0 Q 140 0 140 12 L 140 26 Q 140 38 128 38 L 74 38 L 70 46 L 66 38 L 12 38 Q 0 38 0 26 L 0 12 Q 0 0 12 0 Z' fill='white'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
-            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 46'%3E%3Cpath d='M 12 0 L 128 0 Q 140 0 140 12 L 140 26 Q 140 38 128 38 L 74 38 L 70 46 L 66 38 L 12 38 Q 0 38 0 26 L 0 12 Q 0 0 12 0 Z' fill='white'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+            border: 1px solid rgba(255, 255, 255, 0.35);
         }
-        .tapdot-label-bubble .tapdot-label-bg {
+        .tapdot-label-bubble::after {
+            content: '';
             position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        .tapdot-label-bubble .tapdot-label-bg path {
-            fill: none;
+            bottom: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 4px solid rgba(255, 255, 255, 0.25);
         }
         .tapdot-label-bubble .tapdot-label-text {
             position: relative;
@@ -1570,23 +1572,21 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         iconMesh.scale.setScalar(scale || 1);
 
         let labelEl = null;
+        const tapDotEntry = { dot, iconMesh, color: dotColor, scale, index, config, labelEl: null };
         if (config.caption) {
             labelEl = document.createElement('div');
             labelEl.className = 'tapdot-label-bubble';
-            const gradId = 'labelOutline-' + index;
-            const pathD = 'M 12 0 L 128 0 Q 140 0 140 12 L 140 26 Q 140 38 128 38 L 74 38 L 70 46 L 66 38 L 12 38 Q 0 38 0 26 L 0 12 Q 0 0 12 0 Z';
-            labelEl.innerHTML = '<svg class="tapdot-label-bg" viewBox="0 0 140 46" preserveAspectRatio="none"><defs><linearGradient id="' + gradId + '" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(255,255,255,0.4)"/><stop offset="41%" stop-color="rgba(255,255,255,0)"/><stop offset="57%" stop-color="rgba(255,255,255,0)"/><stop offset="100%" stop-color="rgba(255,255,255,0.4)"/></linearGradient></defs><path d="' + pathD + '" fill="none" stroke="url(#' + gradId + ')" stroke-width="1.4"/></svg><span class="tapdot-label-text">' + config.caption + '</span>';
-            const labelsLayer = document.getElementById('tapdot-labels-layer');
-            if (labelsLayer) labelsLayer.appendChild(labelEl);
-            labelEl._tapDotIndex = index;
+            labelEl.innerHTML = '<span class="tapdot-label-text">' + config.caption + '</span>';
+            tapDotEntry.labelEl = labelEl;
             labelEl.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const td = tapDots[labelEl._tapDotIndex];
-                if (td) showTapDotContent(td);
+                showTapDotContent(tapDotEntry);
             });
+            const labelsLayer = document.getElementById('tapdot-labels-layer');
+            if (labelsLayer) labelsLayer.appendChild(labelEl);
         }
 
-        tapDots.push({ dot, iconMesh, color: dotColor, scale, index, config, labelEl });
+        tapDots.push(tapDotEntry);
         scene.add(dot);
         scene.add(iconMesh);
     }
@@ -2088,7 +2088,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (labelsLayer) labelsLayer.style.display = labelsVisible ? 'block' : 'none';
         if (labelsVisible) {
             const labelOffsetY = 28;
-            const labelLerp = 0.42;
+            const targetLerp = 0.22;
+            const displayLerp = 0.48;
             const overlapPadding = 6;
             const labelMaxDistance = 2.8;
             function rectsOverlap(a, b) {
@@ -2107,39 +2108,46 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 .filter(d => d.screenPos.visible && d.distance <= labelMaxDistance);
             labelsData.sort((a, b) => a.distance - b.distance);
             const visibleRects = [];
-            const labelRectH = 36;
             labelsData.forEach(({ tapDot, screenPos }) => {
-                const labelRectHalfW = Math.max(70, (tapDot.config.caption || '').length * 7);
                 const labelEl = tapDot.labelEl;
-                const targetX = screenPos.x;
-                const targetY = screenPos.y - labelOffsetY;
+                const rawX = screenPos.x;
+                const rawY = screenPos.y - labelOffsetY;
+                let tx = tapDot._labelTargetX;
+                let ty = tapDot._labelTargetY;
+                if (tx === undefined) { tx = rawX; ty = rawY; }
+                tapDot._labelTargetX = tx + (rawX - tx) * targetLerp;
+                tapDot._labelTargetY = ty + (rawY - ty) * targetLerp;
+                const targetX = tapDot._labelTargetX;
+                const targetY = tapDot._labelTargetY;
                 let sx = tapDot._labelSmoothX;
                 let sy = tapDot._labelSmoothY;
                 if (sx === undefined) { sx = targetX; sy = targetY; }
-                const dx = targetX - sx;
-                const dy = targetY - sy;
-                const moveDist = Math.sqrt(dx * dx + dy * dy);
-                const lerpFactor = moveDist > 2 ? 0.42 : 0.11;
-                tapDot._labelSmoothX = sx + dx * lerpFactor;
-                tapDot._labelSmoothY = sy + dy * lerpFactor;
+                tapDot._labelSmoothX = sx + (targetX - sx) * displayLerp;
+                tapDot._labelSmoothY = sy + (targetY - sy) * displayLerp;
                 const x = tapDot._labelSmoothX;
                 const y = tapDot._labelSmoothY;
                 labelEl.style.left = x + 'px';
                 labelEl.style.top = y + 'px';
+                const br = labelEl.getBoundingClientRect();
                 const rect = {
-                    left: x - labelRectHalfW,
-                    right: x + labelRectHalfW,
-                    top: y - labelRectH,
-                    bottom: y
+                    left: br.left,
+                    right: br.right,
+                    top: br.top,
+                    bottom: br.bottom
                 };
                 const overlaps = visibleRects.some(v => rectsOverlap(rect, v));
                 const targetOpacity = overlaps ? 0 : 1;
                 let op = tapDot._labelOpacity;
                 if (op === undefined) op = 0;
-                tapDot._labelOpacity = op + (targetOpacity - op) * labelLerp;
+                tapDot._labelOpacity = op + (targetOpacity - op) * displayLerp;
                 labelEl.style.opacity = tapDot._labelOpacity;
-                if (tapDot._labelOpacity < 0.01) labelEl.style.pointerEvents = 'none';
-                else labelEl.style.pointerEvents = '';
+                if (tapDot._labelOpacity < 0.01) {
+                    labelEl.style.pointerEvents = 'none';
+                    labelEl.style.cursor = '';
+                } else {
+                    labelEl.style.pointerEvents = 'auto';
+                    labelEl.style.cursor = 'pointer';
+                }
                 if (!overlaps) visibleRects.push({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom });
             });
             const visibleTapDots = new Set(labelsData.map(d => d.tapDot));
@@ -2147,7 +2155,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 if (td.labelEl && !visibleTapDots.has(td)) {
                     let op = td._labelOpacity;
                     if (op === undefined) op = 0;
-                    td._labelOpacity = op + (0 - op) * labelLerp;
+                    td._labelOpacity = op + (0 - op) * displayLerp;
                     td.labelEl.style.opacity = td._labelOpacity;
                 }
             });
@@ -2168,20 +2176,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
     controls.addEventListener('start', () => autoRotate = false);
     window.addEventListener('touchstart', () => autoRotate = false);
 
-    const labelsLayerEl = document.getElementById('tapdot-labels-layer');
-    if (labelsLayerEl) {
-        labelsLayerEl.addEventListener('pointerdown', (e) => {
-            if (!e.target.closest('.tapdot-label-bubble')) {
-                labelsLayerEl.style.pointerEvents = 'none';
-                const fwd = new PointerEvent(e.type, { bubbles: true, clientX: e.clientX, clientY: e.clientY, pointerId: e.pointerId, pointerType: e.pointerType, isPrimary: e.isPrimary });
-                renderer.domElement.dispatchEvent(fwd);
-                const restore = () => { labelsLayerEl.style.pointerEvents = 'auto'; document.removeEventListener('pointerup', restore); document.removeEventListener('pointercancel', restore); };
-                document.addEventListener('pointerup', restore, { once: true });
-                document.addEventListener('pointercancel', restore, { once: true });
-            }
-        });
-    }
-
     let lastPointerDownForTapDot = { x: 0, y: 0 };
     let suppressTapDotClickUntil = 0;
     const tapDotClickMoveThreshold = 10;
@@ -2197,7 +2191,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (lotEditState.active) return;
         if (window.isTapdotPopupOpen || isDetailsOpen) return;
         const eventTarget = event.target;
-        if (eventTarget && eventTarget.closest && eventTarget.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container, .lot-editor-toggle-wrap, .lot-editor-panel, .lot-midpoint-plus, .tapdot-label-bubble')) return;
+        if (eventTarget && eventTarget.closest && eventTarget.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container, .lot-editor-toggle-wrap, .lot-editor-panel, .lot-midpoint-plus')) return;
         const dx = event.clientX - lastPointerDownForTapDot.x;
         const dy = event.clientY - lastPointerDownForTapDot.y;
         if (Math.sqrt(dx * dx + dy * dy) > tapDotClickMoveThreshold) return;
