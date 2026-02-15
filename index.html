@@ -2097,6 +2097,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (labelsVisible) {
             const labelOffsetY = 28;
             const overlapPadding = 6;
+            const opacityLerp = 0.18;
             const labelMaxDistance = 2.8;
             function rectsOverlap(a, b) {
                 return !(a.right + overlapPadding <= b.left - overlapPadding ||
@@ -2144,7 +2145,9 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 };
                 const overlaps = visibleRects.some(v => rectsOverlap(rect, v));
                 const targetOpacity = overlaps ? 0 : 1;
-                tapDot._labelOpacity = targetOpacity;
+                let op = tapDot._labelOpacity;
+                if (op === undefined) op = targetOpacity;
+                tapDot._labelOpacity = op + (targetOpacity - op) * opacityLerp;
                 labelEl.style.opacity = tapDot._labelOpacity;
                 if (tapDot._labelOpacity < 0.01) {
                     labelEl.style.pointerEvents = 'none';
@@ -2158,7 +2161,9 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             const visibleTapDots = new Set(labelsData.map(d => d.tapDot));
             tapDots.forEach(td => {
                 if (td.labelEl && !visibleTapDots.has(td)) {
-                    td._labelOpacity = 0;
+                    let op = td._labelOpacity;
+                    if (op === undefined) op = 0;
+                    td._labelOpacity = op + (0 - op) * opacityLerp;
                     td.labelEl.style.opacity = td._labelOpacity;
                 }
             });
