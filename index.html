@@ -2096,8 +2096,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         if (labelsLayer) labelsLayer.style.display = labelsVisible ? 'block' : 'none';
         if (labelsVisible) {
             const labelOffsetY = 28;
-            const targetLerp = 0.22;
-            const displayLerp = 0.48;
             const overlapPadding = 6;
             const labelMaxDistance = 2.8;
             function rectsOverlap(a, b) {
@@ -2116,24 +2114,25 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 .filter(d => d.screenPos.visible && d.distance <= labelMaxDistance);
             labelsData.sort((a, b) => a.distance - b.distance);
             const visibleRects = [];
+            const jitterThreshold = 30;
+            const jitterLerp = 0.35;
             labelsData.forEach(({ tapDot, screenPos }) => {
                 const labelEl = tapDot.labelEl;
                 const rawX = screenPos.x;
                 const rawY = screenPos.y - labelOffsetY;
-                let tx = tapDot._labelTargetX;
-                let ty = tapDot._labelTargetY;
-                if (tx === undefined) { tx = rawX; ty = rawY; }
-                tapDot._labelTargetX = tx + (rawX - tx) * targetLerp;
-                tapDot._labelTargetY = ty + (rawY - ty) * targetLerp;
-                const targetX = tapDot._labelTargetX;
-                const targetY = tapDot._labelTargetY;
-                let sx = tapDot._labelSmoothX;
-                let sy = tapDot._labelSmoothY;
-                if (sx === undefined) { sx = targetX; sy = targetY; }
-                tapDot._labelSmoothX = sx + (targetX - sx) * displayLerp;
-                tapDot._labelSmoothY = sy + (targetY - sy) * displayLerp;
-                const x = tapDot._labelSmoothX;
-                const y = tapDot._labelSmoothY;
+                let sx = tapDot._labelX;
+                let sy = tapDot._labelY;
+                if (sx === undefined) { sx = rawX; sy = rawY; }
+                const dx = Math.abs(rawX - sx);
+                const dy = Math.abs(rawY - sy);
+                const x = (dx < jitterThreshold && dy < jitterThreshold)
+                    ? sx + (rawX - sx) * jitterLerp
+                    : rawX;
+                const y = (dx < jitterThreshold && dy < jitterThreshold)
+                    ? sy + (rawY - sy) * jitterLerp
+                    : rawY;
+                tapDot._labelX = x;
+                tapDot._labelY = y;
                 labelEl.style.left = x + 'px';
                 labelEl.style.top = y + 'px';
                 const br = labelEl.getBoundingClientRect();
@@ -2145,9 +2144,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 };
                 const overlaps = visibleRects.some(v => rectsOverlap(rect, v));
                 const targetOpacity = overlaps ? 0 : 1;
-                let op = tapDot._labelOpacity;
-                if (op === undefined) op = 0;
-                tapDot._labelOpacity = op + (targetOpacity - op) * displayLerp;
+                tapDot._labelOpacity = targetOpacity;
                 labelEl.style.opacity = tapDot._labelOpacity;
                 if (tapDot._labelOpacity < 0.01) {
                     labelEl.style.pointerEvents = 'none';
@@ -2161,9 +2158,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             const visibleTapDots = new Set(labelsData.map(d => d.tapDot));
             tapDots.forEach(td => {
                 if (td.labelEl && !visibleTapDots.has(td)) {
-                    let op = td._labelOpacity;
-                    if (op === undefined) op = 0;
-                    td._labelOpacity = op + (0 - op) * displayLerp;
+                    td._labelOpacity = 0;
                     td.labelEl.style.opacity = td._labelOpacity;
                 }
             });
