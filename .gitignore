@@ -1,0 +1,2 @@
+# Cursor/IDE preview folders (can cause GitHub Actions checkout failures if committed as submodules)
+.preview-*
