@@ -1566,6 +1566,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         let dot = new Mesh(dotGeometry, dotMaterial);
         dot.position.set(position.x, position.y, position.z);
         dot.scale.setScalar(scale || 1);
+        dot.visible = false;
 
         const iconGeometry = new PlaneGeometry(iconBaseSize, iconBaseSize);
         const iconMaterial = new MeshBasicMaterial({
@@ -1576,6 +1577,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         let iconMesh = new Mesh(iconGeometry, iconMaterial);
         iconMesh.position.copy(dot.position);
         iconMesh.scale.setScalar(scale || 1);
+        iconMesh.visible = false;
 
         let labelEl = null;
         const tapDotEntry = { dot, iconMesh, color: dotColor, scale, index, config, labelEl: null };
@@ -1759,10 +1761,13 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             lineMesh.material.opacity = lineOpacity;
             lineMesh.material.color.setHex(lotEditState.active ? 0xe8e8e8 : borderDotParams.color);
         });
-        if (lotEditState.active) {
-            const selectedTapDot = lotEditState.selectedTapDot;
-            tapDots.forEach((tapDot) => {
+        tapDots.forEach((tapDot) => {
+            const showDot = lotEditState.active;
+            tapDot.dot.visible = showDot;
+            tapDot.iconMesh.visible = showDot;
+            if (showDot) {
                 const baseScale = tapDot.scale || 1;
+                const selectedTapDot = lotEditState.selectedTapDot;
                 if (selectedTapDot === tapDot) {
                     tapDot.dot.material.color.setHex(0xffffff);
                     tapDot.dot.scale.setScalar(baseScale * 1.25);
@@ -1770,13 +1775,8 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                     tapDot.dot.material.color.setHex(0x2C2C2E);
                     tapDot.dot.scale.setScalar(baseScale);
                 }
-            });
-        } else {
-            tapDots.forEach((tapDot) => {
-                tapDot.dot.material.color.setHex(0x2C2C2E);
-                tapDot.dot.scale.setScalar(tapDot.scale || 1);
-            });
-        }
+            }
+        });
     }
 
     function rebuildBorderLines() {
@@ -2091,7 +2091,6 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
         const labelsVisible = labelsLayer && !window.isTapdotPopupOpen && !isDetailsOpen;
         if (labelsLayer) labelsLayer.style.display = labelsVisible ? 'block' : 'none';
         if (labelsVisible) {
-            const labelOffsetY = 28;
             const overlapPadding = 6;
             const opacityLerp = 0.18;
             const labelMaxDistance = 2.8;
@@ -2122,7 +2121,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             labelsData.forEach(({ tapDot, screenPos }) => {
                 const labelEl = tapDot.labelEl;
                 const rawX = screenPos.x;
-                const rawY = screenPos.y - labelOffsetY;
+                const rawY = screenPos.y;
                 let sx = tapDot._labelX;
                 let sy = tapDot._labelY;
                 if (sx === undefined) { sx = rawX; sy = rawY; }
