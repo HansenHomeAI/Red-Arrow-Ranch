@@ -2118,6 +2118,7 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
             const visibleRects = [];
             const jitterThreshold = 30;
             const jitterLerp = 0.35;
+            const jitterLerpY = 0.18;
             labelsData.forEach(({ tapDot, screenPos }) => {
                 const labelEl = tapDot.labelEl;
                 const rawX = screenPos.x;
@@ -2127,12 +2128,9 @@ Hart Bench Ranch provides a rare opportunity to own a complete yet manageable op
                 if (sx === undefined) { sx = rawX; sy = rawY; }
                 const dx = Math.abs(rawX - sx);
                 const dy = Math.abs(rawY - sy);
-                const x = (dx < jitterThreshold && dy < jitterThreshold)
-                    ? sx + (rawX - sx) * jitterLerp
-                    : rawX;
-                const y = (dx < jitterThreshold && dy < jitterThreshold)
-                    ? sy + (rawY - sy) * jitterLerp
-                    : rawY;
+                const smooth = dx < jitterThreshold && dy < jitterThreshold;
+                const x = smooth ? sx + (rawX - sx) * jitterLerp : rawX;
+                const y = smooth ? sy + (rawY - sy) * jitterLerpY : rawY;
                 tapDot._labelX = x;
                 tapDot._labelY = y;
                 labelEl.style.left = x + 'px';
