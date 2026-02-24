@@ -94,8 +94,9 @@
             height: var(--tapdot-camera-size);
             object-fit: contain;
             flex-shrink: 0;
-            margin-top: calc((1em - var(--tapdot-camera-size)) / 2);
-            margin-bottom: calc((1em - var(--tapdot-camera-size)) / 2);
+            margin-top: calc((1em - var(--tapdot-camera-size)) / 2 - 0.5px);
+            margin-bottom: calc((1em - var(--tapdot-camera-size)) / 2 + 0.5px);
+            margin-right: -2px;
         }
         .tapdot-label-bubble.has-camera {
             --tapdot-camera-size: 24px;
