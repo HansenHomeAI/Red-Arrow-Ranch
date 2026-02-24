@@ -47,6 +47,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            --tapdot-camera-size: 14px;
+            --tapdot-icon-only-size: 32px;
             gap: 6px;
             padding: 7px 12px;
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -82,15 +84,21 @@
         }
         .tapdot-label-bubble.icon-only {
             padding: 0;
-            width: 32px;
-            height: 32px;
-            min-width: 32px;
+            width: var(--tapdot-icon-only-size);
+            height: var(--tapdot-icon-only-size);
+            min-width: var(--tapdot-icon-only-size);
+            min-height: var(--tapdot-icon-only-size);
         }
         .tapdot-label-bubble .tapdot-camera-icon {
-            width: 14px;
-            height: 14px;
+            width: var(--tapdot-camera-size);
+            height: var(--tapdot-camera-size);
             object-fit: contain;
             flex-shrink: 0;
+            margin-top: calc((1em - var(--tapdot-camera-size)) / 2);
+            margin-bottom: calc((1em - var(--tapdot-camera-size)) / 2);
+        }
+        .tapdot-label-bubble.has-camera {
+            --tapdot-camera-size: 24px;
         }
         .tapdot-label-bubble .tapdot-label-text {
             position: relative;
@@ -1589,6 +1597,7 @@
             labelEl = document.createElement('div');
             labelEl.className = 'tapdot-label-bubble';
             if (!hasCaption && hasPhotos) labelEl.classList.add('icon-only');
+            if (hasPhotos) labelEl.classList.add('has-camera');
             const cameraIconUrl = 'https://raw.githubusercontent.com/HansenHomeAI/WhiteCameraIcon/main/3TestIcons-9.png';
             const parts = [];
             if (hasPhotos) parts.push('<img class="tapdot-camera-icon" src="' + cameraIconUrl + '" alt="">');
