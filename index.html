@@ -196,7 +196,8 @@
         /* Parent Menu (default base values) */
         .menu-container {
             display: flex;
-            width: 105px;
+            width: auto;
+            min-width: 105px;
             height: 59px;
             padding: 7px;
             justify-content: center;
@@ -251,6 +252,9 @@
             box-sizing: border-box;
             -webkit-box-sizing: border-box;
             -moz-box-sizing: border-box;
+            border: 0;
+            background: transparent;
+            padding: 0;
         }
 
         .menu-button img {
@@ -265,6 +269,15 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+        }
+        .menu-button.menu-button-text span {
+            position: relative;
+            z-index: 1;
+            font: 600 11px/1 'Helvetica Neue', Arial, sans-serif;
+            color: rgba(255, 255, 255, 0.92);
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            pointer-events: none;
         }
 
         /* Hover circle for devices with actual hover capabilities */
@@ -829,6 +842,231 @@
             user-select: none;
         }
 
+        /* Interior tour overlay */
+        .interior-tour-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 32;
+            display: none;
+            background:
+                radial-gradient(circle at 22% 18%, rgba(210, 170, 120, 0.16), transparent 40%),
+                radial-gradient(circle at 82% 88%, rgba(90, 115, 142, 0.22), transparent 44%),
+                rgba(8, 10, 12, 0.94);
+        }
+        .interior-tour-overlay.show {
+            display: block;
+        }
+        .interior-tour-shell {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-rows: auto minmax(0, 1fr) auto;
+            padding: 16px;
+            box-sizing: border-box;
+            gap: 12px;
+        }
+        .interior-tour-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            border-radius: 16px;
+            padding: 11px 14px;
+            background: rgba(120, 120, 120, 0.24);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            -webkit-backdrop-filter: blur(26px);
+            backdrop-filter: blur(26px);
+        }
+        .interior-tour-heading {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+        }
+        .interior-tour-kicker {
+            font: 600 10px/1 'Helvetica Neue', Arial, sans-serif;
+            color: rgba(255, 255, 255, 0.62);
+            letter-spacing: 0.9px;
+            text-transform: uppercase;
+        }
+        .interior-tour-title {
+            font: 500 15px/1.3 'Helvetica Neue', Arial, sans-serif;
+            color: rgba(255, 255, 255, 0.94);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .interior-tour-action {
+            border: 0;
+            border-radius: 12px;
+            padding: 9px 14px;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.96);
+            font: 600 11px/1 'Helvetica Neue', Arial, sans-serif;
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            background: rgba(191, 40, 27, 0.74);
+            transition: background-color 0.2s ease, transform 0.18s ease;
+        }
+        .interior-tour-action:hover {
+            background: rgba(191, 40, 27, 0.9);
+        }
+        .interior-tour-action:active {
+            transform: scale(0.97);
+        }
+        .interior-tour-viewport {
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: linear-gradient(180deg, rgba(52, 57, 64, 0.84), rgba(20, 22, 26, 0.94));
+            min-height: 220px;
+            position: relative;
+        }
+        .interior-tour-hotspots {
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .interior-tour-hotspot {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.82);
+            background: rgba(255, 255, 255, 0.14);
+            box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.18s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+        .interior-tour-hotspot::before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.95);
+            transform: translate(-50%, -50%);
+        }
+        .interior-tour-hotspot:hover {
+            transform: translate(-50%, -50%) scale(1.08);
+            background: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.94);
+        }
+        .interior-tour-viewport canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .interior-tour-footer {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            gap: 10px;
+            align-items: center;
+            border-radius: 16px;
+            padding: 10px;
+            background: rgba(120, 120, 120, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            -webkit-backdrop-filter: blur(22px);
+            backdrop-filter: blur(22px);
+        }
+        .interior-tour-step {
+            width: 45px;
+            height: 37px;
+            border: 0;
+            border-radius: 11px;
+            cursor: pointer;
+            color: #fff;
+            font: 600 18px/1 'Helvetica Neue', Arial, sans-serif;
+            background: rgba(255, 255, 255, 0.14);
+            transition: background-color 0.2s ease;
+        }
+        .interior-tour-step:hover {
+            background: rgba(255, 255, 255, 0.24);
+        }
+        .interior-tour-step:disabled {
+            opacity: 0.42;
+            cursor: default;
+        }
+        .interior-tour-nodes {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 2px 1px;
+            scrollbar-width: none;
+        }
+        .interior-tour-nodes::-webkit-scrollbar {
+            display: none;
+        }
+        .interior-tour-node {
+            border: 0;
+            border-radius: 999px;
+            padding: 8px 12px;
+            white-space: nowrap;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.12);
+            font: 500 12px/1 'Helvetica Neue', Arial, sans-serif;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+        .interior-tour-node:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+        .interior-tour-node.active {
+            background: rgba(191, 40, 27, 0.75);
+            color: rgba(255, 255, 255, 0.98);
+        }
+        .interior-tour-help {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            z-index: 1;
+            font: 500 11px/1 'Helvetica Neue', Arial, sans-serif;
+            color: rgba(255, 255, 255, 0.72);
+            letter-spacing: 0.1px;
+            background: rgba(0, 0, 0, 0.36);
+            border: 1px solid rgba(255, 255, 255, 0.13);
+            border-radius: 999px;
+            padding: 8px 10px;
+            pointer-events: none;
+        }
+        @media (max-width: 720px) {
+            .interior-tour-shell {
+                padding: 10px;
+                gap: 9px;
+            }
+            .interior-tour-bar {
+                padding: 10px 11px;
+            }
+            .interior-tour-title {
+                font-size: 13px;
+            }
+            .interior-tour-action {
+                padding: 8px 11px;
+                font-size: 10px;
+            }
+            .interior-tour-step {
+                width: 40px;
+                height: 34px;
+            }
+            .interior-tour-node {
+                font-size: 11px;
+                padding: 7px 10px;
+            }
+            .interior-tour-help {
+                left: 10px;
+                bottom: 10px;
+                font-size: 10px;
+                padding: 6px 8px;
+            }
+        }
+
         /* Lot editor controls */
         .lot-editor-toggle-wrap {
             position: absolute;
@@ -1065,6 +1303,30 @@
         </div>
         <div id="compassButton" class="menu-button">
             <img id="compassIcon" src="https://raw.githubusercontent.com/HansenHomeAI/FigmaSVGButtons/main/NorthOutline.svg" alt="Compass" draggable="false">
+        </div>
+        <button id="interiorTourButton" class="menu-button menu-button-text" type="button" aria-label="Open interior tour">
+            <span>INT</span>
+        </button>
+    </div>
+
+    <div id="interiorTourOverlay" class="interior-tour-overlay" aria-hidden="true">
+        <div class="interior-tour-shell">
+            <div class="interior-tour-bar">
+                <div class="interior-tour-heading">
+                    <div class="interior-tour-kicker">Interior Tour</div>
+                    <div id="interiorTourTitle" class="interior-tour-title">Foyer</div>
+                </div>
+                <button id="interiorTourExit" class="interior-tour-action" type="button">Exterior Tour</button>
+            </div>
+            <div id="interiorTourViewport" class="interior-tour-viewport">
+                <div class="interior-tour-help">Drag to look around. Click white markers to move rooms.</div>
+                <div id="interiorTourHotspots" class="interior-tour-hotspots" aria-hidden="false"></div>
+            </div>
+            <div class="interior-tour-footer">
+                <button id="interiorTourPrev" class="interior-tour-step" type="button" aria-label="Previous interior view">&#8249;</button>
+                <div id="interiorTourNodes" class="interior-tour-nodes" aria-label="Interior viewpoints"></div>
+                <button id="interiorTourNext" class="interior-tour-step" type="button" aria-label="Next interior view">&#8250;</button>
+            </div>
         </div>
     </div>
 
@@ -1953,6 +2215,7 @@
         hiddenCanvas.width = window.innerWidth;
         hiddenCanvas.height = window.innerHeight;
         updateMidpointButtons();
+        resizeInteriorTourViewer();
     });
 
     let angle = parameters.animation.initialAngle !== undefined 
@@ -2105,7 +2368,7 @@
 
         // Update 2D label overlay: project to screen, depth-sort, smooth position/opacity
         const labelsLayer = document.getElementById('tapdot-labels-layer');
-        const labelsVisible = labelsLayer && !window.isTapdotPopupOpen && !isDetailsOpen;
+        const labelsVisible = labelsLayer && !window.isTapdotPopupOpen && !isDetailsOpen && !window.isInteriorTourOpen;
         if (labelsLayer) labelsLayer.style.display = labelsVisible ? 'block' : 'none';
         if (labelsVisible) {
             const overlapPadding = 6;
@@ -2207,7 +2470,7 @@
             return true;
         }
         if (lotEditState.active) return;
-        if (window.isTapdotPopupOpen || isDetailsOpen) return;
+        if (window.isTapdotPopupOpen || isDetailsOpen || window.isInteriorTourOpen) return;
         const eventTarget = event.target;
         if (eventTarget && eventTarget.closest && eventTarget.closest('#overlay-ui, .tapdot-popup, .details-box, .menu-container, .lot-editor-toggle-wrap, .lot-editor-panel, .lot-midpoint-plus')) return;
         const dx = event.clientX - lastPointerDownForTapDot.x;
@@ -2293,6 +2556,15 @@
     const customScrollbar = document.getElementById('customScrollbar');
     const detailsInner = document.getElementById('detailsInner');
     const menuContainer = document.getElementById('menuContainer');
+    const interiorTourButton = document.getElementById('interiorTourButton');
+    const interiorTourOverlay = document.getElementById('interiorTourOverlay');
+    const interiorTourViewport = document.getElementById('interiorTourViewport');
+    const interiorTourHotspotsLayer = document.getElementById('interiorTourHotspots');
+    const interiorTourTitle = document.getElementById('interiorTourTitle');
+    const interiorTourExit = document.getElementById('interiorTourExit');
+    const interiorTourPrev = document.getElementById('interiorTourPrev');
+    const interiorTourNext = document.getElementById('interiorTourNext');
+    const interiorTourNodes = document.getElementById('interiorTourNodes');
     const lotEditorToggle = document.getElementById('lotEditorToggle');
     const lotEditorPanel = document.getElementById('lotEditorPanel');
     const lotEditorStatus = document.getElementById('lotEditorStatus');
@@ -2319,6 +2591,479 @@
             return new URL(normalized, window.location.href).href;
         } catch (error) {
             return normalized;
+        }
+    }
+
+    const interiorTourSceneOrder = ['foyer', 'great-room', 'kitchen', 'primary-suite', 'office'];
+    const interiorTourSceneDefinitions = {
+        'foyer': {
+            title: 'Foyer',
+            palette: { ceiling: '#ddd5c7', upper: '#bba485', mid: '#8d7259', floor: '#4b3527', accent: '#d0ac7f' },
+            seed: 0.12,
+            links: [
+                { target: 'great-room', yaw: -28, pitch: -7, label: 'Great Room' },
+                { target: 'kitchen', yaw: 41, pitch: -6, label: 'Kitchen' },
+                { target: 'office', yaw: 139, pitch: -5, label: 'Office' }
+            ]
+        },
+        'great-room': {
+            title: 'Great Room',
+            palette: { ceiling: '#d8d4ce', upper: '#bcae98', mid: '#7a6a58', floor: '#433328', accent: '#80a3b8' },
+            seed: 0.37,
+            links: [
+                { target: 'foyer', yaw: 165, pitch: -7, label: 'Foyer' },
+                { target: 'kitchen', yaw: 26, pitch: -6, label: 'Kitchen' },
+                { target: 'primary-suite', yaw: -47, pitch: -6, label: 'Primary Suite' }
+            ]
+        },
+        'kitchen': {
+            title: 'Kitchen',
+            palette: { ceiling: '#e0dbd3', upper: '#cab797', mid: '#866e52', floor: '#4f3b2d', accent: '#99a88f' },
+            seed: 0.58,
+            links: [
+                { target: 'foyer', yaw: -135, pitch: -7, label: 'Foyer' },
+                { target: 'great-room', yaw: 132, pitch: -7, label: 'Great Room' },
+                { target: 'primary-suite', yaw: 12, pitch: -8, label: 'Primary Suite' }
+            ]
+        },
+        'primary-suite': {
+            title: 'Primary Suite',
+            palette: { ceiling: '#d9d3cb', upper: '#ab9a85', mid: '#6e5e4d', floor: '#3f3026', accent: '#8da3bc' },
+            seed: 0.74,
+            links: [
+                { target: 'great-room', yaw: 126, pitch: -8, label: 'Great Room' },
+                { target: 'kitchen', yaw: -118, pitch: -8, label: 'Kitchen' },
+                { target: 'office', yaw: 26, pitch: -7, label: 'Office' }
+            ]
+        },
+        'office': {
+            title: 'Office',
+            palette: { ceiling: '#dbd3c9', upper: '#b2936b', mid: '#75583e', floor: '#3a2b21', accent: '#8fa6a0' },
+            seed: 0.91,
+            links: [
+                { target: 'foyer', yaw: -36, pitch: -7, label: 'Foyer' },
+                { target: 'primary-suite', yaw: 149, pitch: -8, label: 'Primary Suite' }
+            ]
+        }
+    };
+    const interiorTourSceneMap = new Map();
+
+    function drawRoundedRect(context, x, y, width, height, radius) {
+        const r = Math.max(0, Math.min(radius, Math.min(width, height) * 0.5));
+        context.beginPath();
+        context.moveTo(x + r, y);
+        context.lineTo(x + width - r, y);
+        context.quadraticCurveTo(x + width, y, x + width, y + r);
+        context.lineTo(x + width, y + height - r);
+        context.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+        context.lineTo(x + r, y + height);
+        context.quadraticCurveTo(x, y + height, x, y + height - r);
+        context.lineTo(x, y + r);
+        context.quadraticCurveTo(x, y, x + r, y);
+        context.closePath();
+    }
+
+    function createInteriorPanoramaTexture(sceneDef) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 2048;
+        canvas.height = 1024;
+        const context = canvas.getContext('2d');
+        if (!context) {
+            const fallbackTexture = new Texture(canvas);
+            fallbackTexture.needsUpdate = true;
+            return fallbackTexture;
+        }
+
+        const width = canvas.width;
+        const height = canvas.height;
+        const horizonY = Math.floor(height * 0.47);
+        const palette = sceneDef.palette;
+
+        const baseGradient = context.createLinearGradient(0, 0, 0, height);
+        baseGradient.addColorStop(0, palette.ceiling);
+        baseGradient.addColorStop(0.36, palette.upper);
+        baseGradient.addColorStop(0.58, palette.mid);
+        baseGradient.addColorStop(1, palette.floor);
+        context.fillStyle = baseGradient;
+        context.fillRect(0, 0, width, height);
+
+        const seamCount = 24;
+        const seamWidth = 4;
+        context.fillStyle = 'rgba(255,255,255,0.08)';
+        for (let i = 0; i < seamCount; i++) {
+            const x = Math.floor((i / seamCount) * width + sceneDef.seed * 220) % width;
+            context.fillRect(x, Math.floor(height * 0.18), seamWidth, Math.floor(height * 0.62));
+        }
+
+        const bandGradient = context.createLinearGradient(0, horizonY - 180, 0, horizonY + 180);
+        bandGradient.addColorStop(0, 'rgba(255,255,255,0.14)');
+        bandGradient.addColorStop(0.5, 'rgba(255,255,255,0)');
+        bandGradient.addColorStop(1, 'rgba(0,0,0,0.22)');
+        context.fillStyle = bandGradient;
+        context.fillRect(0, horizonY - 180, width, 360);
+
+        const windowCount = 10;
+        const baseWindowY = Math.floor(height * 0.3);
+        const windowWidth = Math.floor(width * 0.06);
+        const windowHeight = Math.floor(height * 0.2);
+        for (let i = 0; i < windowCount; i++) {
+            const rawCenterX = ((i + sceneDef.seed * 11) / windowCount) * width;
+            const centerX = ((rawCenterX % width) + width) % width;
+            const drawWindowAt = (xCenter) => {
+                const x = Math.floor(xCenter - windowWidth * 0.5);
+                drawRoundedRect(context, x, baseWindowY, windowWidth, windowHeight, 12);
+                context.fillStyle = 'rgba(255,255,255,0.13)';
+                context.fill();
+                context.strokeStyle = 'rgba(255,255,255,0.2)';
+                context.lineWidth = 2;
+                context.stroke();
+            };
+            drawWindowAt(centerX);
+            drawWindowAt(centerX - width);
+        }
+
+        context.save();
+        context.translate(width * 0.5, height * 0.86);
+        context.scale(1.8, 1);
+        context.beginPath();
+        context.arc(0, 0, 220, 0, Math.PI * 2);
+        context.fillStyle = 'rgba(0,0,0,0.24)';
+        context.fill();
+        context.restore();
+
+        context.save();
+        context.globalAlpha = 0.13;
+        for (let i = 0; i < 240; i++) {
+            const x = Math.random() * width;
+            const y = Math.random() * height;
+            const r = Math.random() * 1.6 + 0.2;
+            context.fillStyle = i % 2 === 0 ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.4)';
+            context.beginPath();
+            context.arc(x, y, r, 0, Math.PI * 2);
+            context.fill();
+        }
+        context.restore();
+
+        context.fillStyle = 'rgba(255,255,255,0.16)';
+        context.font = "500 34px 'Helvetica Neue', Arial, sans-serif";
+        context.textAlign = 'left';
+        context.fillText(sceneDef.title.toUpperCase(), 60, 78);
+        context.fillText(sceneDef.title.toUpperCase(), width - 60 - context.measureText(sceneDef.title.toUpperCase()).width, 78);
+
+        const texture = new Texture(canvas);
+        texture.needsUpdate = true;
+        return texture;
+    }
+
+    interiorTourSceneOrder.forEach((sceneId) => {
+        const sceneDef = interiorTourSceneDefinitions[sceneId];
+        if (!sceneDef) return;
+        const completeDef = { ...sceneDef, id: sceneId, texture: createInteriorPanoramaTexture(sceneDef) };
+        interiorTourSceneMap.set(sceneId, completeDef);
+    });
+
+    window.isInteriorTourOpen = false;
+    const interiorTourState = {
+        renderer: null,
+        scene: null,
+        camera: null,
+        controls: null,
+        sphere: null,
+        hotspots: [],
+        hotspotButtons: [],
+        currentSceneId: interiorTourSceneOrder[0],
+        animationFrameId: 0,
+        raycaster: new Raycaster(),
+        pointer: new Vector2(),
+        pointerDown: null,
+        forwardVector: new Vector3(),
+        projectedVector: new Vector3(),
+        exteriorSnapshot: {
+            controlsEnabled: true,
+            autoRotate: true
+        }
+    };
+
+    function interiorYawPitchToVector3(yawDeg, pitchDeg, radius = 42) {
+        const yaw = MathUtils.degToRad(yawDeg);
+        const pitch = MathUtils.degToRad(pitchDeg);
+        const x = radius * Math.sin(yaw) * Math.cos(pitch);
+        const y = radius * Math.sin(pitch);
+        const z = radius * Math.cos(yaw) * Math.cos(pitch);
+        return new Vector3(x, y, z);
+    }
+
+    function clearInteriorHotspots() {
+        if (interiorTourHotspotsLayer && interiorTourState.hotspotButtons.length) {
+            interiorTourState.hotspotButtons.forEach((button) => button.remove());
+            interiorTourState.hotspotButtons = [];
+        }
+        if (!interiorTourState.hotspots.length || !interiorTourState.scene) return;
+        interiorTourState.hotspots.forEach((hotspot) => {
+            if (hotspot.userData && hotspot.userData.glow) {
+                interiorTourState.scene.remove(hotspot.userData.glow);
+                hotspot.userData.glow.geometry.dispose();
+                hotspot.userData.glow.material.dispose();
+            }
+            interiorTourState.scene.remove(hotspot);
+            hotspot.geometry.dispose();
+            hotspot.material.dispose();
+        });
+        interiorTourState.hotspots = [];
+    }
+
+    function buildInteriorHotspots(sceneDef) {
+        if (!interiorTourState.scene) return;
+        clearInteriorHotspots();
+        (sceneDef.links || []).forEach((link, index) => {
+            if (!interiorTourSceneMap.has(link.target)) return;
+            const hotspotGeometry = new SphereGeometry(1.8, 22, 22);
+            const hotspotMaterial = new MeshBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.95
+            });
+            const hotspot = new Mesh(hotspotGeometry, hotspotMaterial);
+            hotspot.position.copy(interiorYawPitchToVector3(link.yaw, link.pitch, 42));
+            hotspot.userData.targetId = link.target;
+            hotspot.userData.label = link.label || interiorTourSceneMap.get(link.target).title;
+            hotspot.userData.phase = index * 0.8;
+
+            const glowGeometry = new SphereGeometry(3.4, 20, 20);
+            const glowMaterial = new MeshBasicMaterial({
+                color: 0xffffff,
+                transparent: true,
+                opacity: 0.2
+            });
+            const glow = new Mesh(glowGeometry, glowMaterial);
+            glow.position.copy(hotspot.position);
+            glow.userData.phase = hotspot.userData.phase;
+            hotspot.userData.glow = glow;
+
+            interiorTourState.scene.add(glow);
+            interiorTourState.scene.add(hotspot);
+            interiorTourState.hotspots.push(hotspot);
+
+            if (interiorTourHotspotsLayer) {
+                const hotspotButton = document.createElement('button');
+                hotspotButton.type = 'button';
+                hotspotButton.className = 'interior-tour-hotspot';
+                hotspotButton.dataset.targetId = link.target;
+                hotspotButton.setAttribute('aria-label', `Move to ${hotspot.userData.label}`);
+                hotspotButton.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    setInteriorScene(link.target);
+                });
+                hotspotButton._hotspotMesh = hotspot;
+                hotspot.userData.domButton = hotspotButton;
+                interiorTourHotspotsLayer.appendChild(hotspotButton);
+                interiorTourState.hotspotButtons.push(hotspotButton);
+            }
+        });
+    }
+
+    function updateInteriorHotspotButtons() {
+        if (!interiorTourHotspotsLayer || !interiorTourState.hotspotButtons.length || !interiorTourState.camera || !interiorTourState.renderer) return;
+        const canvasRect = interiorTourState.renderer.domElement.getBoundingClientRect();
+        if (!canvasRect.width || !canvasRect.height) return;
+        interiorTourState.camera.getWorldDirection(interiorTourState.forwardVector);
+
+        interiorTourState.hotspotButtons.forEach((button) => {
+            const hotspot = button._hotspotMesh;
+            if (!hotspot) {
+                button.style.opacity = '0';
+                button.style.pointerEvents = 'none';
+                return;
+            }
+
+            const forwardness = interiorTourState.forwardVector.dot(hotspot.position.clone().normalize());
+            if (forwardness <= 0.08) {
+                button.style.opacity = '0';
+                button.style.pointerEvents = 'none';
+                return;
+            }
+
+            interiorTourState.projectedVector.copy(hotspot.position).project(interiorTourState.camera);
+            const x = (interiorTourState.projectedVector.x + 1) * 0.5 * canvasRect.width;
+            const y = (1 - interiorTourState.projectedVector.y) * 0.5 * canvasRect.height;
+            const onScreen = x >= -40 && x <= canvasRect.width + 40 && y >= -40 && y <= canvasRect.height + 40;
+            if (!onScreen || interiorTourState.projectedVector.z < -1 || interiorTourState.projectedVector.z > 1) {
+                button.style.opacity = '0';
+                button.style.pointerEvents = 'none';
+                return;
+            }
+
+            button.style.left = `${x}px`;
+            button.style.top = `${y}px`;
+            button.style.opacity = '1';
+            button.style.pointerEvents = 'auto';
+        });
+    }
+
+    function renderInteriorSceneNodes() {
+        if (!interiorTourNodes) return;
+        interiorTourNodes.innerHTML = '';
+        interiorTourSceneOrder.forEach((sceneId) => {
+            const sceneDef = interiorTourSceneMap.get(sceneId);
+            if (!sceneDef) return;
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = `interior-tour-node${sceneId === interiorTourState.currentSceneId ? ' active' : ''}`;
+            button.textContent = sceneDef.title;
+            button.dataset.sceneId = sceneId;
+            interiorTourNodes.appendChild(button);
+        });
+    }
+
+    function setInteriorScene(sceneId) {
+        if (!interiorTourState.sphere) return;
+        const sceneDef = interiorTourSceneMap.get(sceneId);
+        if (!sceneDef) return;
+        interiorTourState.currentSceneId = sceneId;
+        interiorTourState.sphere.material.map = sceneDef.texture;
+        interiorTourState.sphere.material.needsUpdate = true;
+        buildInteriorHotspots(sceneDef);
+        if (interiorTourTitle) interiorTourTitle.textContent = sceneDef.title;
+        if (interiorTourPrev) interiorTourPrev.disabled = interiorTourSceneOrder.length < 2;
+        if (interiorTourNext) interiorTourNext.disabled = interiorTourSceneOrder.length < 2;
+        renderInteriorSceneNodes();
+        updateInteriorHotspotButtons();
+    }
+
+    function goToRelativeInteriorScene(direction) {
+        const currentIndex = interiorTourSceneOrder.indexOf(interiorTourState.currentSceneId);
+        if (currentIndex < 0 || interiorTourSceneOrder.length < 2) return;
+        const nextIndex = (currentIndex + direction + interiorTourSceneOrder.length) % interiorTourSceneOrder.length;
+        setInteriorScene(interiorTourSceneOrder[nextIndex]);
+    }
+
+    function ensureInteriorTourViewer() {
+        if (!interiorTourViewport) return false;
+        if (interiorTourState.renderer) return true;
+
+        interiorTourState.renderer = new WebGLRenderer({ antialias: true, alpha: true });
+        interiorTourState.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        interiorTourState.renderer.setClearColor(new Color(0x000000), 0);
+        interiorTourViewport.appendChild(interiorTourState.renderer.domElement);
+
+        interiorTourState.scene = new Scene();
+        interiorTourState.camera = new PerspectiveCamera(72, 1, 0.1, 1200);
+        interiorTourState.camera.position.set(0, 0, 0.01);
+
+        interiorTourState.controls = new OrbitControls(interiorTourState.camera, interiorTourState.renderer.domElement);
+        interiorTourState.controls.enableDamping = true;
+        interiorTourState.controls.dampingFactor = 0.08;
+        interiorTourState.controls.enableZoom = false;
+        interiorTourState.controls.enablePan = false;
+        interiorTourState.controls.rotateSpeed = -0.22;
+        interiorTourState.controls.minPolarAngle = Math.PI * 0.24;
+        interiorTourState.controls.maxPolarAngle = Math.PI * 0.76;
+
+        const sphereGeometry = new SphereGeometry(500, 70, 52);
+        sphereGeometry.scale(-1, 1, 1);
+        const sphereMaterial = new MeshBasicMaterial({ color: 0x101318 });
+        interiorTourState.sphere = new Mesh(sphereGeometry, sphereMaterial);
+        interiorTourState.scene.add(interiorTourState.sphere);
+
+        interiorTourState.renderer.domElement.addEventListener('pointerdown', (event) => {
+            interiorTourState.pointerDown = { x: event.clientX, y: event.clientY };
+        }, { passive: true });
+
+        interiorTourState.renderer.domElement.addEventListener('pointerup', (event) => {
+            if (!window.isInteriorTourOpen || !interiorTourState.renderer || !interiorTourState.camera) return;
+            const down = interiorTourState.pointerDown;
+            interiorTourState.pointerDown = null;
+            if (down) {
+                const travel = Math.hypot(event.clientX - down.x, event.clientY - down.y);
+                if (travel > 8) return;
+            }
+            const rect = interiorTourState.renderer.domElement.getBoundingClientRect();
+            if (!rect.width || !rect.height) return;
+            interiorTourState.pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            interiorTourState.pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            interiorTourState.raycaster.setFromCamera(interiorTourState.pointer, interiorTourState.camera);
+            const hits = interiorTourState.raycaster.intersectObjects(interiorTourState.hotspots, false);
+            if (!hits.length) return;
+            const targetId = hits[0].object && hits[0].object.userData ? hits[0].object.userData.targetId : null;
+            if (targetId) setInteriorScene(targetId);
+        }, { passive: true });
+        return true;
+    }
+
+    function resizeInteriorTourViewer() {
+        if (!interiorTourState.renderer || !interiorTourState.camera || !interiorTourViewport) return;
+        const width = Math.max(interiorTourViewport.clientWidth, 1);
+        const height = Math.max(interiorTourViewport.clientHeight, 1);
+        interiorTourState.camera.aspect = width / height;
+        interiorTourState.camera.updateProjectionMatrix();
+        interiorTourState.renderer.setSize(width, height, false);
+        updateInteriorHotspotButtons();
+    }
+
+    function runInteriorTourFrame() {
+        if (!window.isInteriorTourOpen || !interiorTourState.renderer || !interiorTourState.scene || !interiorTourState.camera) {
+            interiorTourState.animationFrameId = 0;
+            return;
+        }
+        interiorTourState.controls.update();
+        const now = performance.now() * 0.0032;
+        interiorTourState.hotspots.forEach((hotspot, index) => {
+            const phase = hotspot.userData.phase || index;
+            const pulse = 0.84 + Math.sin(now + phase) * 0.12;
+            hotspot.scale.setScalar(pulse);
+            hotspot.material.opacity = 0.74 + Math.sin(now * 0.9 + phase) * 0.16;
+            if (hotspot.userData.glow) {
+                const glowScale = 0.9 + Math.sin(now + phase) * 0.1;
+                hotspot.userData.glow.scale.setScalar(glowScale);
+                hotspot.userData.glow.material.opacity = 0.11 + Math.sin(now * 0.9 + phase) * 0.04;
+            }
+        });
+        updateInteriorHotspotButtons();
+        interiorTourState.renderer.render(interiorTourState.scene, interiorTourState.camera);
+        interiorTourState.animationFrameId = requestAnimationFrame(runInteriorTourFrame);
+    }
+
+    function openInteriorTour(startSceneId = interiorTourState.currentSceneId) {
+        if (!ensureInteriorTourViewer()) return;
+        if (window.isInteriorTourOpen) {
+            if (interiorTourSceneMap.has(startSceneId)) setInteriorScene(startSceneId);
+            return;
+        }
+        if (window.isTapdotPopupOpen) closeTapdotPopup();
+        if (isDetailsOpen) closeDetails();
+
+        interiorTourState.exteriorSnapshot.controlsEnabled = controls.enabled;
+        interiorTourState.exteriorSnapshot.autoRotate = autoRotate;
+        controls.enabled = false;
+        autoRotate = false;
+        renderer.domElement.style.pointerEvents = 'none';
+
+        window.isInteriorTourOpen = true;
+        if (interiorTourOverlay) {
+            interiorTourOverlay.classList.add('show');
+            interiorTourOverlay.setAttribute('aria-hidden', 'false');
+        }
+        setInteriorScene(interiorTourSceneMap.has(startSceneId) ? startSceneId : interiorTourSceneOrder[0]);
+        resizeInteriorTourViewer();
+        if (!interiorTourState.animationFrameId) {
+            interiorTourState.animationFrameId = requestAnimationFrame(runInteriorTourFrame);
+        }
+    }
+
+    function closeInteriorTour() {
+        if (!window.isInteriorTourOpen) return;
+        window.isInteriorTourOpen = false;
+        if (interiorTourOverlay) {
+            interiorTourOverlay.classList.remove('show');
+            interiorTourOverlay.setAttribute('aria-hidden', 'true');
+        }
+        renderer.domElement.style.pointerEvents = '';
+        controls.enabled = interiorTourState.exteriorSnapshot.controlsEnabled;
+        autoRotate = interiorTourState.exteriorSnapshot.autoRotate;
+        if (interiorTourState.animationFrameId) {
+            cancelAnimationFrame(interiorTourState.animationFrameId);
+            interiorTourState.animationFrameId = 0;
         }
     }
 
@@ -3248,6 +3993,55 @@
     // Add click listener for compass button
     compassButton.addEventListener('click', () => {
         animateCameraToNorth();
+    });
+    if (interiorTourButton) {
+        interiorTourButton.addEventListener('click', () => {
+            openInteriorTour();
+        });
+    }
+    if (interiorTourExit) {
+        interiorTourExit.addEventListener('click', () => {
+            closeInteriorTour();
+        });
+    }
+    if (interiorTourPrev) {
+        interiorTourPrev.addEventListener('click', () => {
+            goToRelativeInteriorScene(-1);
+        });
+    }
+    if (interiorTourNext) {
+        interiorTourNext.addEventListener('click', () => {
+            goToRelativeInteriorScene(1);
+        });
+    }
+    if (interiorTourNodes) {
+        interiorTourNodes.addEventListener('click', (event) => {
+            const nodeButton = event.target && event.target.closest ? event.target.closest('.interior-tour-node') : null;
+            if (!nodeButton) return;
+            const sceneId = nodeButton.dataset ? nodeButton.dataset.sceneId : '';
+            if (sceneId) setInteriorScene(sceneId);
+        });
+    }
+    if (interiorTourOverlay) {
+        interiorTourOverlay.addEventListener('click', (event) => {
+            if (event.target === interiorTourOverlay) closeInteriorTour();
+        });
+    }
+    window.addEventListener('keydown', (event) => {
+        if (!window.isInteriorTourOpen) return;
+        if (event.key === 'Escape') {
+            closeInteriorTour();
+            return;
+        }
+        if (event.key === 'ArrowRight') {
+            goToRelativeInteriorScene(1);
+            event.preventDefault();
+            return;
+        }
+        if (event.key === 'ArrowLeft') {
+            goToRelativeInteriorScene(-1);
+            event.preventDefault();
+        }
     });
 
     fullscreenButton.addEventListener('click', async () => {
